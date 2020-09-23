@@ -1,10 +1,13 @@
 import React, { useEffect, useLayoutEffect, useState } from 'react';
 import { Bomb, OtherBomb, Wall, Hero, Enemy, WallHole } from './Pieces'
+import { Winner } from './Winner'
+import { Loser } from './Loser'
 import './App.css';
 
 const gridSize = 30
 
-const Board = ({ canMove, setCanMove }) => {
+const Board = ({ setLose, setWin}) => {
+  const [canMove, setCanMove] = useState(true)
   const [position, setPosition] = useState({})
   const [hasBomb, setHasBomb] = useState(false)
   const [hasOtherBomb, setHasOtherBomb] = useState(false)
@@ -260,18 +263,34 @@ const Board = ({ canMove, setCanMove }) => {
     if (position.x === otherBombPosition.x && position.y === otherBombPosition.y) setHasOtherBomb(true)
   },[position])
 
+  // clear wall coords when bomb used
   useEffect(() => {
     if (bombUsed) setVoidPositions(prevVoid => prevVoid.filter(coord => !(coord.x === wallHole.x && coord.y === wallHole.y)))
   },[bombUsed])
 
+  // enemy gets bomb
   useEffect(() => {
     if (enemyPosition.x === otherBombPosition.x && enemyPosition.y === otherBombPosition.y) setEnemyHasBomb(true)
   },[enemyPosition])
 
+  // touch enemy
+  useEffect(() => {
+    if (hasOtherBomb) {
+      if (position.x === enemyPosition.x && position.y === enemyPosition.y) {
+        setWin(true)
+      }
+    }
+    if (enemyHasBomb) {
+      if (position.x === enemyPosition.x && position.y === enemyPosition.y) {
+        setLose(true)
+      }
+    }
+  },[position, enemyPosition])
+
   return (
     <div className="Board" style={{height: bounds.height, width: bounds.width}}>
-      <Enemy position={enemyPosition} />
-      <Hero position={position} hasBomb={hasBomb && !bombUsed}  />
+      <Enemy position={enemyPosition} hasBomb={enemyHasBomb} />
+      <Hero position={position} hasBomb={hasBomb && !bombUsed} hasOtherBomb={hasOtherBomb}  />
       <Wall position={wallPosition} dimensions={wallDimensions} />
       {!(hasOtherBomb || enemyHasBomb) && <OtherBomb position={otherBombPosition} />}
       {!hasBomb && !bombUsed && <Bomb position={bombPosition} />}
@@ -281,11 +300,16 @@ const Board = ({ canMove, setCanMove }) => {
 }
 
 const App = () => {
-  const [canMove, setCanMove] = useState(true)
+  const [win, setWin] = useState(false)
+  const [lose, setLose] = useState(false)
 
   return (
     <div className="App">
-      <Board canMove={canMove} setCanMove={setCanMove} />
+      {win && <Winner />}
+      {lose && <Loser />}
+      {!win && !lose && (
+        <Board setLose={setLose} setWin={setWin} />
+      )}
     </div>
   );
 }

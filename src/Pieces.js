@@ -18,15 +18,15 @@ export const Wall = ({ position, dimensions }) => {
   )
 }
 
-export const Hero = ({ position, hasBomb }) => {
+export const Hero = ({ position, hasBomb, hasOtherBomb }) => {
   return (
-    <div style={{top: position.y, left: position.x}} className={`Hero ${hasBomb ? 'has-bomb' : ''}`}>H</div>
+    <div style={{top: position.y, left: position.x}} className={`Hero ${(hasBomb || hasOtherBomb) ? 'has-bomb' : ''}`}>H</div>
   )
 }
 
-export const Enemy = ({ position }) => {
+export const Enemy = ({ position, hasBomb }) => {
   return (
-    <div style={{top: position.y, left: position.x}} className="Enemy">E</div>
+    <div style={{top: position.y, left: position.x}} className={`Enemy ${hasBomb ? 'has-bomb' : ''}`}>E</div>
   )
 }
 
