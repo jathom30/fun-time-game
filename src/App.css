@@ -1,0 +1,39 @@
+.App {
+  min-height: 100vh;
+  background: midnightblue;
+}
+
+.Board {
+  position: relative;
+  background: rgb(31, 26, 46);
+  overflow: hidden;
+}
+
+.Wall {
+  background: rgb(136, 10, 10);
+  position: absolute;
+}
+
+.GoldCoin {
+  height: 30px;
+  width: 30px;
+  background: gold;
+  border-radius: 50%;
+  position: absolute;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.Hero {
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgb(138, 238, 188);
+  position: absolute;
+  height: 30px;
+  width: 30px;
+  transition: transform .2s ease;
+  z-index: 10;
+}
