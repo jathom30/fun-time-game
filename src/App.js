@@ -36,6 +36,7 @@ const Board = ({ canMove, setCanMove }) => {
     height: 420,
   })
 
+  // Wall position and dimensions
   useLayoutEffect(() => {
     const gridCount = bounds.width / gridSize
     const randomOnGrid = () => Math.floor(Math.random() * gridCount) * gridSize
@@ -60,6 +61,7 @@ const Board = ({ canMove, setCanMove }) => {
 
   },[])
 
+  // Get clipping coords
   useEffect(() => {
     const yUnits = wallDimensions.height / gridSize
     const xUnits = wallDimensions.width / gridSize
@@ -77,9 +79,9 @@ const Board = ({ canMove, setCanMove }) => {
 
   },[wallPosition, wallDimensions])
 
+  // move player
   useEffect(() => {
     const move = (e) => {
-
       const checkMove = (key) => {
         switch (key) {
           case 'w':
