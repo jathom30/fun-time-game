@@ -54,5 +54,6 @@
 .WallHole {
   width: 30px;
   height: 30px;
-  background: rgba(54, 11, 11, 0.534);
+  background: rgba(54, 11, 11, 0.75);
+  position: absolute;
 }

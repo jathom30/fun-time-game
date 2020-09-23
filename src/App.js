@@ -1,5 +1,5 @@
 import React, { useEffect, useLayoutEffect, useState } from 'react';
-import { Bomb, GoldCoin, Wall, Hero, Enemy } from './Pieces'
+import { Bomb, GoldCoin, Wall, Hero, Enemy, WallHole } from './Pieces'
 import './App.css';
 
 const gridSize = 30
@@ -8,12 +8,12 @@ const Board = ({ canMove, setCanMove }) => {
   const [position, setPosition] = useState({})
   const [hasBomb, setHasBomb] = useState(false)
   const [wallDimensions, setWallDimensions] = useState({height: 0, width: gridSize})
-  const [wallPosition, setWallPosition] = useState({
-    x: 0, y: gridSize
-  })
-  const [coinPosition, setCoinPosition] = useState({x: 0, y: 0})
+  const [wallPosition, setWallPosition] = useState({})
+  const [wallHole, setWallHole] = useState({})
+  const [coinPosition, setCoinPosition] = useState({})
   const [bombPosition, setBombPosition] = useState({x: 0, y: 0})
-  const [enemyPosition, setEnemyPosition] = useState({x: 300, y: 300})
+  const [bombUsed, setBombUsed] = useState(false)
+  const [enemyPosition, setEnemyPosition] = useState({})
   const [voidPositions, setVoidPositions] = useState([{x: -gridSize, y: -gridSize}])
   const [bounds, setBounds] = useState({
     width: 420,
@@ -229,20 +229,49 @@ const Board = ({ canMove, setCanMove }) => {
     document.addEventListener('keypress', handleMove)
     return () => document.removeEventListener('keypress', handleMove)
   },[canMove])
-  
+
+  // bomb functionality
   useEffect(() => {
-    //check if hero is on bomb (has bomb)
     if (position.x === bombPosition.x && position.y === bombPosition.y) setHasBomb(true)
+
+    if (hasBomb) {
+      const horizontal = wallDimensions.width > wallDimensions.height
+      const atWall = voidPositions.some(coord => {
+        if (horizontal) {
+          return position.x === coord.x && (position.y + gridSize) === coord.y
+        } else {
+          return (position.x + gridSize) === coord.x && position.y === coord.y
+        }
+      })
+      if (atWall && !bombUsed) {
+        const blownWallCoords = horizontal ? {
+          x: position.x, y: position.y + gridSize
+        } : {
+          x: position.x + gridSize, y: position.y
+        }
+        setWallHole(blownWallCoords)
+        setBombUsed(true)
+      }
+    }
+
   },[position])
+
+  useEffect(() => {
+    if (bombUsed) {
+      const newVoid = [...voidPositions].filter(coord => !(coord.x === wallHole.x && coord.y === wallHole.y))
+      setVoidPositions(newVoid)
+    }
+  },[bombUsed])
 
 
   return (
     <div className="Board" style={{height: bounds.height, width: bounds.width}}>
-      <Hero position={position} hasBomb={hasBomb} />
+      <Hero position={position} hasBomb={hasBomb && !bombUsed} />
       <Wall position={wallPosition} dimensions={wallDimensions} />
       <GoldCoin position={coinPosition} />
-      {!hasBomb && <Bomb position={bombPosition} />}
+      {!hasBomb && !bombUsed && <Bomb position={bombPosition} />}
       <Enemy position={enemyPosition} />
+      {wallHole.x && <WallHole position={wallHole} />}
     </div>
   )
 }
