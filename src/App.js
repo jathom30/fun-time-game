@@ -5,9 +5,8 @@ import './App.css';
 const gridSize = 30
 
 const Board = ({ canMove, setCanMove }) => {
-  const [position, setPosition] = useState({
-    x: 0, y: 0,
-  })
+  const [position, setPosition] = useState({})
+  const [hasBomb, setHasBomb] = useState(false)
   const [wallDimensions, setWallDimensions] = useState({height: 0, width: gridSize})
   const [wallPosition, setWallPosition] = useState({
     x: 0, y: gridSize
@@ -226,17 +225,23 @@ const Board = ({ canMove, setCanMove }) => {
       setCanMove(false)
       setTimeout(() => setCanMove(true), 200)
     }
-
+    
     document.addEventListener('keypress', handleMove)
     return () => document.removeEventListener('keypress', handleMove)
   },[canMove])
+  
+  useEffect(() => {
+    //check if hero is on bomb (has bomb)
+    if (position.x === bombPosition.x && position.y === bombPosition.y) setHasBomb(true)
+  },[position])
+
 
   return (
     <div className="Board" style={{height: bounds.height, width: bounds.width}}>
-      <Hero position={position} />
+      <Hero position={position} hasBomb={hasBomb} />
       <Wall position={wallPosition} dimensions={wallDimensions} />
       <GoldCoin position={coinPosition} />
-      <Bomb position={bombPosition} />
+      {!hasBomb && <Bomb position={bombPosition} />}
       <Enemy position={enemyPosition} />
     </div>
   )

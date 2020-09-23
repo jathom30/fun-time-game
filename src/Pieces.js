@@ -18,9 +18,9 @@ export const Wall = ({ position, dimensions }) => {
   )
 }
 
-export const Hero = ({ position }) => {
+export const Hero = ({ position, hasBomb }) => {
   return (
-    <div style={{top: position.y, left: position.x}} className="Hero">H</div>
+    <div style={{top: position.y, left: position.x}} className={`Hero ${hasBomb ? 'has-bomb' : ''}`}>H</div>
   )
 }
 
@@ -30,3 +30,8 @@ export const Enemy = ({ position }) => {
   )
 }
 
+export const WallHole = ({ position }) => {
+  return (
+    <div className="WallHole" style={{top: position.y, left: position.x}} />
+  )
+}

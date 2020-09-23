@@ -33,10 +33,26 @@
   background: rgb(138, 238, 188);
   transition: all .2s ease;
   z-index: 1;
+  position: relative;
+}
+.Hero.has-bomb::after {
+  content: '💣 ' ;
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  width: 10px;
+  height: 10px;
+  line-height: 10px;
 }
 
 .Enemy {
   background: coral;
   transition: all .2s ease;
   z-index: 2;
+}
+
+.WallHole {
+  width: 30px;
+  height: 30px;
+  background: rgba(54, 11, 11, 0.534);
 }
