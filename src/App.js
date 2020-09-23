@@ -15,6 +15,7 @@ const Board = ({ canMove, setCanMove }) => {
   const [bombPosition, setBombPosition] = useState({x: 0, y: 0})
   const [bombUsed, setBombUsed] = useState(false)
   const [enemyPosition, setEnemyPosition] = useState({})
+  const [enemyHasBomb, setEnemyHasBomb] = useState(false)
   const [voidPositions, setVoidPositions] = useState([{x: -gridSize, y: -gridSize}])
   const [bounds, setBounds] = useState({
     width: 420,
@@ -263,13 +264,16 @@ const Board = ({ canMove, setCanMove }) => {
     if (bombUsed) setVoidPositions(prevVoid => prevVoid.filter(coord => !(coord.x === wallHole.x && coord.y === wallHole.y)))
   },[bombUsed])
 
+  useEffect(() => {
+    if (enemyPosition.x === otherBombPosition.x && enemyPosition.y === otherBombPosition.y) setEnemyHasBomb(true)
+  },[enemyPosition])
 
   return (
     <div className="Board" style={{height: bounds.height, width: bounds.width}}>
       <Enemy position={enemyPosition} />
       <Hero position={position} hasBomb={hasBomb && !bombUsed}  />
       <Wall position={wallPosition} dimensions={wallDimensions} />
-      {!hasOtherBomb && <OtherBomb position={otherBombPosition} />}
+      {!(hasOtherBomb || enemyHasBomb) && <OtherBomb position={otherBombPosition} />}
       {!hasBomb && !bombUsed && <Bomb position={bombPosition} />}
       {wallHole.x && <WallHole position={wallHole} />}
     </div>
