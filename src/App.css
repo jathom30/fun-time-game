@@ -14,7 +14,7 @@
   position: absolute;
 }
 
-.GoldCoin, .Bomb {
+.GoldCoin, .Bomb, .Hero, .Enemy {
   height: 30px;
   width: 30px;
   background: gold;
@@ -30,14 +30,13 @@
 }
 
 .Hero {
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
   background: rgb(138, 238, 188);
-  position: absolute;
-  height: 30px;
-  width: 30px;
   transition: all .2s ease;
-  z-index: 10;
+  z-index: 1;
+}
+
+.Enemy {
+  background: coral;
+  transition: all .2s ease;
+  z-index: 2;
 }

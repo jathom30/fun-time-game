@@ -23,3 +23,10 @@ export const Hero = ({ position }) => {
     <div style={{top: position.y, left: position.x}} className="Hero">H</div>
   )
 }
+
+export const Enemy = ({ position }) => {
+  return (
+    <div style={{top: position.y, left: position.x}} className="Enemy">E</div>
+  )
+}
+

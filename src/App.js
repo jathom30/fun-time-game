@@ -1,5 +1,5 @@
 import React, { useEffect, useLayoutEffect, useState } from 'react';
-import { Bomb, GoldCoin, Wall, Hero } from './Pieces'
+import { Bomb, GoldCoin, Wall, Hero, Enemy } from './Pieces'
 import './App.css';
 
 const gridSize = 30
@@ -8,19 +8,20 @@ const Board = ({ canMove, setCanMove }) => {
   const [position, setPosition] = useState({
     x: 0, y: 0,
   })
-  const [wallDimensions, setWallDimensions] = useState({height: 90, width: gridSize})
+  const [wallDimensions, setWallDimensions] = useState({height: 0, width: gridSize})
   const [wallPosition, setWallPosition] = useState({
-    x: 90, y: gridSize
+    x: 0, y: gridSize
   })
-  const [coinPosition, setCoinPosition] = useState({x: 300, y: 300})
-  const [bombPosition, setBombPosition] = useState({x: 30, y: 30})
+  const [coinPosition, setCoinPosition] = useState({x: 0, y: 0})
+  const [bombPosition, setBombPosition] = useState({x: 0, y: 0})
+  const [enemyPosition, setEnemyPosition] = useState({x: 300, y: 300})
   const [voidPositions, setVoidPositions] = useState([{x: -gridSize, y: -gridSize}])
   const [bounds, setBounds] = useState({
     width: 420,
     height: 420,
   })
 
-  // Wall position and dimensions AND hero, coin, bomb placements
+  // Wall position and dimensions AND hero, coin, bomb, enemy placements
   useLayoutEffect(() => {
     const horizontal = Math.floor(Math.random() * 2)
     const dimensions = () => {
@@ -63,7 +64,7 @@ const Board = ({ canMove, setCanMove }) => {
       y: wallY,
     })
 
-    // place Hero, Coin, and Bomb based on wall position
+    // place Hero, Coin, Bomb, and Enemy based on wall position
     if (horizontal) {
       // hero
       const hero = {
@@ -72,9 +73,10 @@ const Board = ({ canMove, setCanMove }) => {
       }
       setPosition(hero)
       // coin
+      const coinX = randomOnGrid(gridCount)
       const coinY = randomOnGrid(gridCount, (wallY / gridSize))
       const coin = {
-        x: randomOnGrid(gridCount),
+        x: coinX,
         y: coinY === wallY ? coinY + gridSize : coinY
       }
       setCoinPosition(coin)
@@ -85,6 +87,13 @@ const Board = ({ canMove, setCanMove }) => {
         x: bombX + gridSize, y: bombY + gridSize,
       } : {x: bombX, y: bombY}
       setBombPosition(bomb)
+      // enemy
+      const enemyX = randomOnGrid(gridCount)
+      const enemyY = randomOnGrid(gridCount, (wallY / gridSize))
+      const enemy = enemyX === coinX && enemyY === coinY ? {
+        x: enemyX + gridSize, y: enemyY + gridSize,
+      } : {x: enemyX, y: enemyY}
+      setEnemyPosition(enemy)
     } else {
       const hero = {
         x: randomOnGrid(wallX / gridSize),
@@ -92,9 +101,10 @@ const Board = ({ canMove, setCanMove }) => {
       }
       setPosition(hero)
       const coinX = randomOnGrid(gridCount, (wallX / gridSize))
+      const coinY = randomOnGrid(gridCount)
       const coin = {
         x: coinX === wallX ? coinX + gridSize : coinX,
-        y: randomOnGrid(gridCount)
+        y: coinY
       }
       setCoinPosition(coin)
       // bomb
@@ -104,6 +114,13 @@ const Board = ({ canMove, setCanMove }) => {
         x: bombX + gridSize, y: bombY + gridSize,
       } : {x: bombX, y: bombY}
       setBombPosition(bomb)
+      // enemy
+      const enemyX = randomOnGrid(gridCount, (wallX / gridSize))
+      const enemyY = randomOnGrid(gridCount)
+      const enemy = enemyX === coinX && enemyY === coinY ? {
+        x: enemyX + gridSize, y: enemyY + gridSize,
+      } : {x: enemyX, y: enemyY}
+      setEnemyPosition(enemy)
     }
 
   },[])
@@ -143,6 +160,20 @@ const Board = ({ canMove, setCanMove }) => {
             return true
         }
       }
+      const checkEnemyMove = (key) => {
+        switch (key) {
+          case 'w':
+            return voidPositions.some(xy => xy.y === enemyPosition.y + gridSize && xy.x === enemyPosition.x)
+          case 's':
+            return voidPositions.some(xy => xy.y === (enemyPosition.y - gridSize) && xy.x === enemyPosition.x)
+          case 'a':
+            return voidPositions.some(xy => xy.x === enemyPosition.x + gridSize && xy.y === enemyPosition.y)
+          case 'd':
+            return voidPositions.some(xy => xy.x === enemyPosition.x - gridSize && xy.y === enemyPosition.y)
+          default:
+            return true
+        }
+      }
 
       switch (e.key) {
         case 'w':
@@ -150,11 +181,19 @@ const Board = ({ canMove, setCanMove }) => {
             ...prevPos,
             y: prevPos.y >= gridSize && !checkMove(e.key) ? prevPos.y - gridSize : prevPos.y
           }))
+          setEnemyPosition(prevPos => ({
+            ...prevPos,
+            y: (prevPos.y + (gridSize * 2)) <= bounds.height && !checkEnemyMove(e.key) ? prevPos.y + gridSize : prevPos.y
+          }))
           break
         case 's':
           setPosition(prevPos => ({
             ...prevPos,
             y: prevPos.y <= bounds.height - (gridSize * 2) && !checkMove(e.key) ? prevPos.y + gridSize : prevPos.y
+          }))
+          setEnemyPosition(prevPos => ({
+            ...prevPos,
+            y: prevPos.y >= gridSize && !checkEnemyMove(e.key) ? prevPos.y - gridSize : prevPos.y
           }))
           break
         case 'a':
@@ -162,11 +201,19 @@ const Board = ({ canMove, setCanMove }) => {
             ...prevPos,
             x: prevPos.x >= gridSize && !checkMove(e.key) ? prevPos.x - gridSize : prevPos.x
           }))
+          setEnemyPosition(prevPos => ({
+            ...prevPos,
+            x: prevPos.x <= bounds.width - (gridSize * 2) && !checkEnemyMove(e.key) ? prevPos.x + gridSize : prevPos.x
+          }))
           break
         case 'd':
           setPosition(prevPos => ({
             ...prevPos,
             x: prevPos.x <= bounds.width - (gridSize * 2) && !checkMove(e.key) ? prevPos.x + gridSize : prevPos.x
+          }))
+          setEnemyPosition(prevPos => ({
+            ...prevPos,
+            x: prevPos.x >= gridSize && !checkEnemyMove(e.key) ? prevPos.x - gridSize : prevPos.x
           }))
           break
         default: 
@@ -190,6 +237,7 @@ const Board = ({ canMove, setCanMove }) => {
       <Wall position={wallPosition} dimensions={wallDimensions} />
       <GoldCoin position={coinPosition} />
       <Bomb position={bombPosition} />
+      <Enemy position={enemyPosition} />
     </div>
   )
 }
