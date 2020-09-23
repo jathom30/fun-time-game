@@ -6,9 +6,9 @@ export const Bomb = ({ position }) => {
   )
 }
 
-export const GoldCoin = ({ position }) => {
+export const OtherBomb = ({ position }) => {
   return (
-    <div className="GoldCoin" style={{ top: position.y, left: position.x}}>C</div>
+    <div className="Bomb" style={{ top: position.y, left: position.x}}>B</div>
   )
 }
 

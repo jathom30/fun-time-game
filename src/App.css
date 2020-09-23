@@ -48,7 +48,7 @@
 .Enemy {
   background: coral;
   transition: all .2s ease;
-  z-index: 2;
+  z-index: 1;
 }
 
 .WallHole {
