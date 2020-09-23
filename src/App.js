@@ -1,5 +1,5 @@
 import React, { useEffect, useLayoutEffect, useState } from 'react';
-import { Bomb, GoldCoin, Wall, Hero } from './Pieces'
+import { Bomb, GoldCoin, Wall, Hero, Enemy } from './Pieces'
 import './App.css';
 
 const gridSize = 30
@@ -8,12 +8,13 @@ const Board = ({ canMove, setCanMove }) => {
   const [position, setPosition] = useState({
     x: 0, y: 0,
   })
-  const [wallDimensions, setWallDimensions] = useState({height: 90, width: gridSize})
+  const [wallDimensions, setWallDimensions] = useState({height: 0, width: gridSize})
   const [wallPosition, setWallPosition] = useState({
-    x: 90, y: gridSize
+    x: 0, y: gridSize
   })
-  const [coinPosition, setCoinPosition] = useState({x: 300, y: 300})
-  const [bombPosition, setBombPosition] = useState({x: 30, y: 30})
+  const [coinPosition, setCoinPosition] = useState({x: 0, y: 0})
+  const [bombPosition, setBombPosition] = useState({x: 0, y: 0})
+  const [enemyPosition, setEnemyPosition] = useState({x: 300, y: 300})
   const [voidPositions, setVoidPositions] = useState([{x: -gridSize, y: -gridSize}])
   const [bounds, setBounds] = useState({
     width: 420,
@@ -190,6 +191,7 @@ const Board = ({ canMove, setCanMove }) => {
       <Wall position={wallPosition} dimensions={wallDimensions} />
       <GoldCoin position={coinPosition} />
       <Bomb position={bombPosition} />
+      <Enemy position={enemyPosition} />
     </div>
   )
 }
