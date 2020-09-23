@@ -1,6 +1,7 @@
 .App {
   min-height: 100vh;
-  background: midnightblue;
+  background: rgb(23, 3, 56);
+  font-family: 'Epilogue', sans-serif;
 }
 
 .Board {
@@ -67,4 +68,10 @@
   transform: translate(-50%, -50%);
   padding: 10px;
   text-align: center;
+  color: rgb(55, 17, 116);
+}
+
+.Winner h1 {
+  font-weight: bold;
+  font-size: 50px;
 }

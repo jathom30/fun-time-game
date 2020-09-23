@@ -1,5 +1,5 @@
 import React from 'react'
-const gridSize = 50
+const gridSize = 60
 
 const standardStyles = {
   height: gridSize, width: gridSize, fontSize: gridSize, lineHeight: gridSize,

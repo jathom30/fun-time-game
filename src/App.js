@@ -4,7 +4,7 @@ import { Winner } from './Winner'
 import { Loser } from './Loser'
 import './App.css';
 
-const gridSize = 50
+const gridSize = 60
 
 const Board = ({ setLose, setWin}) => {
   const [canMove, setCanMove] = useState(true)
