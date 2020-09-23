@@ -254,16 +254,14 @@ const Board = ({ canMove, setCanMove }) => {
         setBombUsed(true)
       }
     }
-    if (bombUsed) {
-      const newVoid = [...voidPositions].filter(coord => !(coord.x === wallHole.x && coord.y === wallHole.y))
-      setVoidPositions(newVoid)
-    }
 
     // otherBomb
     if (position.x === otherBombPosition.x && position.y === otherBombPosition.y) setHasOtherBomb(true)
   },[position])
 
-
+  useEffect(() => {
+    if (bombUsed) setVoidPositions(prevVoid => prevVoid.filter(coord => !(coord.x === wallHole.x && coord.y === wallHole.y)))
+  },[bombUsed])
 
 
   return (
