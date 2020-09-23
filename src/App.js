@@ -1,31 +1,8 @@
 import React, { useEffect, useLayoutEffect, useState } from 'react';
+import { Bomb, GoldCoin, Wall, Hero } from './Pieces'
 import './App.css';
 
 const gridSize = 30
-
-const Bomb = ({ position }) => {
-  return (
-    <div className="Bomb" style={{ top: position.y, left: position.x}}>B</div>
-  )
-}
-
-const GoldCoin = ({ position }) => {
-  return (
-    <div className="GoldCoin" style={{ top: position.y, left: position.x}}>C</div>
-  )
-}
-
-const Wall = ({ position, dimensions }) => {
-  return (
-    <div className="Wall" style={{ top: position.y, left: position.x, height: dimensions.height, width: dimensions.width }} />
-  )
-}
-
-const Hero = ({ position }) => {
-  return (
-    <div style={{transform: `translate(${position.x}px, ${position.y}px)`}} className="Hero">H</div>
-  )
-}
 
 const Board = ({ canMove, setCanMove }) => {
   const [position, setPosition] = useState({
@@ -169,28 +146,28 @@ const Board = ({ canMove, setCanMove }) => {
 
       switch (e.key) {
         case 'w':
-          setPosition({
-            ...position,
-            y: position.y >= gridSize && !checkMove(e.key) ? position.y - gridSize : position.y
-          })
+          setPosition(prevPos => ({
+            ...prevPos,
+            y: prevPos.y >= gridSize && !checkMove(e.key) ? prevPos.y - gridSize : prevPos.y
+          }))
           break
         case 's':
-          setPosition({
-            ...position,
-            y: position.y <= bounds.height - 60 && !checkMove(e.key) ? position.y + gridSize : position.y
-          })
+          setPosition(prevPos => ({
+            ...prevPos,
+            y: prevPos.y <= bounds.height - (gridSize * 2) && !checkMove(e.key) ? prevPos.y + gridSize : prevPos.y
+          }))
           break
         case 'a':
-          setPosition({
-            ...position,
-            x: position.x >= gridSize && !checkMove(e.key) ? position.x - gridSize : position.x
-          })
+          setPosition(prevPos => ({
+            ...prevPos,
+            x: prevPos.x >= gridSize && !checkMove(e.key) ? prevPos.x - gridSize : prevPos.x
+          }))
           break
         case 'd':
-          setPosition({
-            ...position,
-            x: position.x <= bounds.width - 60 && !checkMove(e.key) ? position.x + gridSize : position.x
-          })
+          setPosition(prevPos => ({
+            ...prevPos,
+            x: prevPos.x <= bounds.width - (gridSize * 2) && !checkMove(e.key) ? prevPos.x + gridSize : prevPos.x
+          }))
           break
         default: 
           break
