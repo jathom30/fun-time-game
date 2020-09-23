@@ -1,25 +1,8 @@
 import React, { useEffect, useLayoutEffect, useState } from 'react';
+import { Bomb, GoldCoin, Wall, Hero } from './Pieces'
 import './App.css';
 
 const gridSize = 30
-
-const GoldCoin = ({ position }) => {
-  return (
-    <div className="GoldCoin" style={{ top: position.y, left: position.x}}>C</div>
-  )
-}
-
-const Wall = ({ position, dimensions }) => {
-  return (
-    <div className="Wall" style={{ top: position.y, left: position.x, height: dimensions.height, width: dimensions.width }} />
-  )
-}
-
-const Hero = ({ position }) => {
-  return (
-    <div style={{transform: `translate(${position.x}px, ${position.y}px)`}} className="Hero">H</div>
-  )
-}
 
 const Board = ({ canMove, setCanMove }) => {
   const [position, setPosition] = useState({
@@ -30,34 +13,98 @@ const Board = ({ canMove, setCanMove }) => {
     x: 90, y: gridSize
   })
   const [coinPosition, setCoinPosition] = useState({x: 300, y: 300})
+  const [bombPosition, setBombPosition] = useState({x: 30, y: 30})
   const [voidPositions, setVoidPositions] = useState([{x: -gridSize, y: -gridSize}])
   const [bounds, setBounds] = useState({
     width: 420,
     height: 420,
   })
 
-  // Wall position and dimensions
+  // Wall position and dimensions AND hero, coin, bomb placements
   useLayoutEffect(() => {
-    const gridCount = bounds.width / gridSize
-    const randomOnGrid = () => Math.floor(Math.random() * gridCount) * gridSize
-    const x = randomOnGrid()
-    const y = randomOnGrid()
-    setWallPosition({
-      x: x === 0 ? gridSize : x, y: y === 0 ? gridSize : y
-    })
-
     const horizontal = Math.floor(Math.random() * 2)
-    const leg = randomOnGrid()
     const dimensions = () => {
       return horizontal ? {
-        width: leg + x + gridSize >= bounds.width ? leg - (leg + x - bounds.width + gridSize) : leg,
+        width: bounds.width,
         height: gridSize,
       } : {
         width: gridSize,
-        height: leg + y + gridSize >= bounds.height ? leg - (leg + y - bounds.height + gridSize) : leg,
+        height: bounds.height,
       }
     }
     setWallDimensions(dimensions())
+
+    const gridCount = bounds.width / gridSize
+    const randomOnGrid = (max, min = 0) => (Math.floor(Math.random() * (max - min)) + min) * gridSize
+    const x = randomOnGrid(gridCount)
+    const y = randomOnGrid(gridCount)
+
+    const wallCheck = (position, upperBound) => {
+      switch (position) {
+        case 0:
+          return gridSize * 2
+        case gridSize: 
+          return gridSize * 2
+        case upperBound:
+          return upperBound - (gridSize * 3)
+        case upperBound - gridSize:
+          return upperBound - (gridSize * 3)
+        case upperBound - (gridSize * 2):
+          return upperBound - (gridSize * 3)
+        default:
+          return position
+      }
+    }
+
+    const wallX = horizontal ? 0 : wallCheck(x, bounds.width)
+    const wallY = !horizontal ? 0 : wallCheck(y, bounds.height)
+    setWallPosition({
+      x: wallX,
+      y: wallY,
+    })
+
+    // place Hero, Coin, and Bomb based on wall position
+    if (horizontal) {
+      // hero
+      const hero = {
+        x: randomOnGrid(gridCount),
+        y: randomOnGrid(wallY / gridSize)
+      }
+      setPosition(hero)
+      // coin
+      const coinY = randomOnGrid(gridCount, (wallY / gridSize))
+      const coin = {
+        x: randomOnGrid(gridCount),
+        y: coinY === wallY ? coinY + gridSize : coinY
+      }
+      setCoinPosition(coin)
+      // bomb
+      const bombX = randomOnGrid(gridCount)
+      const bombY = randomOnGrid(wallY / gridSize)
+      const bomb = bombX === hero.x && bombY === hero.y ? {
+        x: bombX + gridSize, y: bombY + gridSize,
+      } : {x: bombX, y: bombY}
+      setBombPosition(bomb)
+    } else {
+      const hero = {
+        x: randomOnGrid(wallX / gridSize),
+        y: randomOnGrid(gridCount)
+      }
+      setPosition(hero)
+      const coinX = randomOnGrid(gridCount, (wallX / gridSize))
+      const coin = {
+        x: coinX === wallX ? coinX + gridSize : coinX,
+        y: randomOnGrid(gridCount)
+      }
+      setCoinPosition(coin)
+      // bomb
+      const bombX = randomOnGrid(wallX / gridSize)
+      const bombY = randomOnGrid(gridCount)
+      const bomb = bombX === hero.x && bombY === hero.y ? {
+        x: bombX + gridSize, y: bombY + gridSize,
+      } : {x: bombX, y: bombY}
+      setBombPosition(bomb)
+    }
 
   },[])
 
@@ -99,28 +146,28 @@ const Board = ({ canMove, setCanMove }) => {
 
       switch (e.key) {
         case 'w':
-          setPosition({
-            ...position,
-            y: position.y >= gridSize && !checkMove(e.key) ? position.y - gridSize : position.y
-          })
+          setPosition(prevPos => ({
+            ...prevPos,
+            y: prevPos.y >= gridSize && !checkMove(e.key) ? prevPos.y - gridSize : prevPos.y
+          }))
           break
         case 's':
-          setPosition({
-            ...position,
-            y: position.y <= bounds.height - 60 && !checkMove(e.key) ? position.y + gridSize : position.y
-          })
+          setPosition(prevPos => ({
+            ...prevPos,
+            y: prevPos.y <= bounds.height - (gridSize * 2) && !checkMove(e.key) ? prevPos.y + gridSize : prevPos.y
+          }))
           break
         case 'a':
-          setPosition({
-            ...position,
-            x: position.x >= gridSize && !checkMove(e.key) ? position.x - gridSize : position.x
-          })
+          setPosition(prevPos => ({
+            ...prevPos,
+            x: prevPos.x >= gridSize && !checkMove(e.key) ? prevPos.x - gridSize : prevPos.x
+          }))
           break
         case 'd':
-          setPosition({
-            ...position,
-            x: position.x <= bounds.width - 60 && !checkMove(e.key) ? position.x + gridSize : position.x
-          })
+          setPosition(prevPos => ({
+            ...prevPos,
+            x: prevPos.x <= bounds.width - (gridSize * 2) && !checkMove(e.key) ? prevPos.x + gridSize : prevPos.x
+          }))
           break
         default: 
           break
@@ -142,6 +189,7 @@ const Board = ({ canMove, setCanMove }) => {
       <Hero position={position} />
       <Wall position={wallPosition} dimensions={wallDimensions} />
       <GoldCoin position={coinPosition} />
+      <Bomb position={bombPosition} />
     </div>
   )
 }
