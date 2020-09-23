@@ -4,7 +4,7 @@ import { Winner } from './Winner'
 import { Loser } from './Loser'
 import './App.css';
 
-const gridSize = 30
+const gridSize = 50
 
 const Board = ({ setLose, setWin}) => {
   const [canMove, setCanMove] = useState(true)
@@ -21,8 +21,8 @@ const Board = ({ setLose, setWin}) => {
   const [enemyHasBomb, setEnemyHasBomb] = useState(false)
   const [voidPositions, setVoidPositions] = useState([{x: -gridSize, y: -gridSize}])
   const [bounds, setBounds] = useState({
-    width: 420,
-    height: 420,
+    width: Math.floor(document.documentElement.clientWidth / gridSize) * gridSize,
+    height: Math.floor(document.documentElement.clientHeight / gridSize) * gridSize,
   })
 
   // Wall position and dimensions AND hero, otherBomb, bomb, enemy placements
