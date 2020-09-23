@@ -3,6 +3,12 @@ import './App.css';
 
 const gridSize = 30
 
+const Bomb = ({ position }) => {
+  return (
+    <div className="Bomb" style={{ top: position.y, left: position.x}}>B</div>
+  )
+}
+
 const GoldCoin = ({ position }) => {
   return (
     <div className="GoldCoin" style={{ top: position.y, left: position.x}}>C</div>
@@ -30,6 +36,7 @@ const Board = ({ canMove, setCanMove }) => {
     x: 90, y: gridSize
   })
   const [coinPosition, setCoinPosition] = useState({x: 300, y: 300})
+  const [bombPosition, setBombPosition] = useState({x: 30, y: 30})
   const [voidPositions, setVoidPositions] = useState([{x: -gridSize, y: -gridSize}])
   const [bounds, setBounds] = useState({
     width: 420,
@@ -38,26 +45,42 @@ const Board = ({ canMove, setCanMove }) => {
 
   // Wall position and dimensions
   useLayoutEffect(() => {
-    const gridCount = bounds.width / gridSize
-    const randomOnGrid = () => Math.floor(Math.random() * gridCount) * gridSize
-    const x = randomOnGrid()
-    const y = randomOnGrid()
-    setWallPosition({
-      x: x === 0 ? gridSize : x, y: y === 0 ? gridSize : y
-    })
-
     const horizontal = Math.floor(Math.random() * 2)
-    const leg = randomOnGrid()
     const dimensions = () => {
       return horizontal ? {
-        width: leg + x + gridSize >= bounds.width ? leg - (leg + x - bounds.width + gridSize) : leg,
+        width: bounds.width,
         height: gridSize,
       } : {
         width: gridSize,
-        height: leg + y + gridSize >= bounds.height ? leg - (leg + y - bounds.height + gridSize) : leg,
+        height: bounds.height,
       }
     }
     setWallDimensions(dimensions())
+
+    const gridCount = bounds.width / gridSize
+    const randomOnGrid = (count) => Math.floor(Math.random() * count) * gridSize
+    const x = randomOnGrid(gridCount)
+    const y = randomOnGrid(gridCount)
+    // check that wall position !== max width or height
+    const wallX = horizontal ? 0 : (x === 0 ? 30 : x)
+    const wallY = !horizontal ? 0 : (y === 0 ? 30 : y)
+    setWallPosition({
+      x: wallX,
+      y: wallY,
+    })
+
+    // if horizontal, player placed north of wall
+    if (horizontal) {
+      setPosition({
+        x: randomOnGrid(gridCount),
+        y: randomOnGrid(wallY / gridSize)
+      })
+    } else {
+      setPosition({
+        x: randomOnGrid(wallX / gridSize),
+        y: randomOnGrid(gridCount)
+      })
+    }
 
   },[])
 
@@ -142,6 +165,7 @@ const Board = ({ canMove, setCanMove }) => {
       <Hero position={position} />
       <Wall position={wallPosition} dimensions={wallDimensions} />
       <GoldCoin position={coinPosition} />
+      <Bomb position={bombPosition} />
     </div>
   )
 }
