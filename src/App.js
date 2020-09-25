@@ -1,44 +1,41 @@
 import React, { useEffect, useLayoutEffect, useState } from 'react';
 import { Bomb, OtherBomb, Wall, Hero, Opposite, WallHole, Goal, OppositeGoal } from './Pieces'
 import { Winner } from './Winner'
-import { Loser } from './Loser'
 import './App.css';
 
 const gridSize = 60
 document.documentElement.style.setProperty('--height', gridSize/2+'px')
 
-const Board = ({ setLose, setWin}) => {
-  const [canMove, setCanMove] = useState(true)
-  const [position, setPosition] = useState({})
-  const [hasBomb, setHasBomb] = useState(false)
+const Board = ({ setWin}) => {
+  // wall related state
   const [wallDimensions, setWallDimensions] = useState({height: 0, width: gridSize})
   const [wallPosition, setWallPosition] = useState({})
+  const [wallRatio, setWallRatio] = useState(0)
   const [wallHole, setWallHole] = useState({})
-  const [oppositeBombPosition, setOppositeBombPosition] = useState({x: 0, y: 0})
-  const [bombPosition, setBombPosition] = useState({x: 0, y: 0})
-  const [oppositePosition, setOppositePosition] = useState({})
-  const [oppositeHasBomb, setOppositeHasBomb] = useState(false)
+  const [wallHoleRatio, setWallHoleRatio] = useState(0)
 
+  // movement related state
+  const [canMove, setCanMove] = useState(true)
+
+  // position related state
+  const [position, setPosition] = useState({})
+  const [bombPosition, setBombPosition] = useState({x: 0, y: 0})
+  const [hasBomb, setHasBomb] = useState(false)
   const [goal, setGoal] = useState({x: -90, y: -90})
+  const [goalRatio, setGoalRatio] = useState({x:0,y:0})
+
+  // opposite related state
+  const [oppositePosition, setOppositePosition] = useState({})
+  const [oppositeBombPosition, setOppositeBombPosition] = useState({x: 0, y: 0})
+  const [oppositeHasBomb, setOppositeHasBomb] = useState(false)
   const [oppositeGoal, setOppositeGoal] = useState({x: -90, y: -90})
+  const [oppositeGoalRatio, setOppositeGoalRatio] = useState({x:0,y:0})
 
   const [bounds, setBounds] = useState({
     width: Math.floor(document.documentElement.clientWidth / gridSize) * gridSize,
     height: Math.floor(document.documentElement.clientHeight / gridSize) * gridSize,
   })
   const [voidPositions, setVoidPositions] = useState([{x: -gridSize, y: -gridSize}])
-
-  // update bounds based on page resize
-  useEffect(() => {
-    const resize = () => {
-      setBounds({
-        width: Math.floor(window.innerWidth / gridSize) * gridSize,
-        height: Math.floor(window.innerHeight / gridSize) * gridSize,
-      })
-    }
-    window.addEventListener('resize', resize)
-    return () => window.removeEventListener('resize', resize)
-  },[])
 
   // Wall position and dimensions AND hero, oppositeBomb, bomb, opposite, wall hole placements
   useEffect(() => {
@@ -85,6 +82,8 @@ const Board = ({ setLose, setWin}) => {
 
     // place pieces based on wall position
     if (horizontal) {
+      // wall ratio 
+      setWallRatio(wallY / bounds.height)
       // hero
       const hero = {
         x: randomOnGrid(gridCount),
@@ -116,11 +115,27 @@ const Board = ({ setLose, setWin}) => {
       //wall hole
       const wallHoleX = randomOnGrid(gridCount)
       setWallHole({x:wallHoleX,y: wallY})
+      setWallHoleRatio(wallHoleX / bounds.width)
       // goal
-      setGoal({x: randomOnGrid(gridCount), y: randomOnGrid(gridCount, (wallY / gridSize))})
+      const goalX = randomOnGrid(gridCount)
+      const goalY = randomOnGrid(gridCount, (wallY / gridSize))
+      setGoal({x: goalX, y: goalY})
+      setGoalRatio({
+        x: goalX / bounds.width,
+        y: goalY / bounds.height,
+      })
       // opposite goal
-      setOppositeGoal({x: randomOnGrid(gridCount), y: randomOnGrid(wallY / gridSize)})
+      const oppositeGoalX = randomOnGrid(gridCount)
+      const oppositeGoalY = randomOnGrid(wallY / gridSize)
+      setOppositeGoal({x: oppositeGoalX, y: oppositeGoalY})
+      setOppositeGoalRatio({
+        x: oppositeGoalX / bounds.width,
+        y: oppositeGoalY / bounds.height
+      })
     } else {
+      // wall ratio
+      setWallRatio(wallX / bounds.width)
+      // hero
       const hero = {
         x: randomOnGrid(wallX / gridSize),
         y: randomOnGrid(gridCount)
@@ -150,10 +165,23 @@ const Board = ({ setLose, setWin}) => {
       //wall hole
       const wallHoleY = randomOnGrid(gridCount)
       setWallHole({x:wallX,y: wallHoleY})
+      setWallHoleRatio(wallHoleY / bounds.height)
       // goal
-      setGoal({x: randomOnGrid(gridCount, (wallX / gridSize)), y: randomOnGrid(gridCount)})
+      const goalX = randomOnGrid(gridCount, (wallX / gridSize))
+      const goalY = randomOnGrid(gridCount)
+      setGoal({x: goalX, y: goalY})
+      setGoalRatio({
+        x: goalX / bounds.width,
+        y: goalY / bounds.height
+      })
       // opposite goal
-      setOppositeGoal({x: randomOnGrid(wallX / gridSize), y: randomOnGrid(gridCount)})
+      const oppositeGoalX = randomOnGrid(wallX / gridSize)
+      const oppositeGoalY = randomOnGrid(gridCount)
+      setOppositeGoal({x: oppositeGoalX, y: oppositeGoalY})
+      setOppositeGoalRatio({
+        x: oppositeGoalX / bounds.width,
+        y: oppositeGoalY / bounds.height
+      })
     }
 
   },[])
@@ -273,36 +301,91 @@ const Board = ({ setLose, setWin}) => {
   },[position, oppositePosition])
 
   useEffect(() => {
-    position.x === goal.x && position.y === goal.y && console.log('position: ',position, 'goal: ', goal)
     if (position.x === goal.x && position.y === goal.y && oppositePosition.x === oppositeGoal.x && oppositePosition.y === oppositeGoal.y) {
       setWin(true)
     }
   },[position, oppositePosition])
 
+
+
+  // update bounds based on page resize
+  useEffect(() => {
+    const resize = () => {
+      const minDim = gridSize * 7
+      const width = Math.floor(window.innerWidth / gridSize) * gridSize
+      const height = Math.floor(window.innerHeight / gridSize) * gridSize
+      setBounds({
+        width: width < minDim ? minDim : width,
+        height: height < minDim ? minDim : height
+      })
+
+      // adjust wall
+      const horizontal = wallDimensions.width > wallDimensions.height
+      const wallX = Math.floor(width * wallRatio / gridSize) * gridSize
+      const wallY = Math.floor(height * wallRatio / gridSize) * gridSize
+      if (horizontal) {
+        setWallPosition({
+          x: wallPosition.x,
+          y: wallY,
+        })
+        setWallDimensions({
+          width,
+          height: gridSize,
+        })
+        setWallHole({
+          x: Math.floor(width * wallHoleRatio / gridSize) * gridSize,
+          y: wallY,
+        })
+      } else {
+        setWallPosition({
+          x: wallX,
+          y: wallPosition.y,
+        })
+        setWallDimensions({
+          width: gridSize,
+          height,
+        })
+        setWallHole({
+          x: wallX,
+          y: Math.floor(height * wallHoleRatio / gridSize) * gridSize,
+        })
+      }
+      setGoal({
+        x: Math.floor(width * goalRatio.x / gridSize) * gridSize,
+        y: Math.floor(height * goalRatio.y / gridSize) * gridSize
+      })
+      setOppositeGoal({
+        x: Math.floor(width * oppositeGoalRatio.x / gridSize) * gridSize,
+        y: Math.floor(height * oppositeGoalRatio.y / gridSize) * gridSize
+      })
+    }
+
+    window.addEventListener('resize', resize)
+    return () => window.removeEventListener('resize', resize)
+  },[wallPosition])
+
   return (
     <div className="Board" style={{height: bounds.height, width: bounds.width}}>
-      <Opposite position={oppositePosition} hasBomb={oppositeHasBomb} />
-      <Hero position={position} hasBomb={hasBomb} />
       <Wall position={wallPosition} dimensions={wallDimensions} />
-      {!oppositeHasBomb && <OtherBomb position={oppositeBombPosition} />}
-      {!hasBomb && <Bomb position={bombPosition} />}
-      {wallHole.x > 0 && <WallHole position={wallHole} />}
+      <WallHole position={wallHole} />
       <Goal position={goal} />
       <OppositeGoal position={oppositeGoal} />
+      <Hero position={position} hasBomb={hasBomb} />
+      <Opposite position={oppositePosition} hasBomb={oppositeHasBomb} />
+      {!oppositeHasBomb && <OtherBomb position={oppositeBombPosition} />}
+      {!hasBomb && <Bomb position={bombPosition} />}
     </div>
   )
 }
 
 const App = () => {
   const [win, setWin] = useState(false)
-  const [lose, setLose] = useState(false)
 
   return (
     <div className="App">
       {win && <Winner />}
-      {lose && <Loser />}
-      {!win && !lose && (
-        <Board setLose={setLose} setWin={setWin} />
+      {!win && (
+        <Board setWin={setWin} />
       )}
     </div>
   );
