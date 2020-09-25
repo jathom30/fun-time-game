@@ -1,16 +1,11 @@
 import React, { useEffect, useLayoutEffect, useState } from 'react';
-import { Bomb, OtherBomb, Wall, Hero, Opposite, WallHole } from './Pieces'
+import { Bomb, OtherBomb, Wall, Hero, Opposite, WallHole, Goal, OppositeGoal } from './Pieces'
 import { Winner } from './Winner'
 import { Loser } from './Loser'
 import './App.css';
 
 const gridSize = 60
 document.documentElement.style.setProperty('--height', gridSize/2+'px')
-
-const bounds = {
-  width: Math.floor(document.documentElement.clientWidth / gridSize) * gridSize,
-  height: Math.floor(document.documentElement.clientHeight / gridSize) * gridSize,
-}
 
 const Board = ({ setLose, setWin}) => {
   const [canMove, setCanMove] = useState(true)
@@ -21,13 +16,32 @@ const Board = ({ setLose, setWin}) => {
   const [wallHole, setWallHole] = useState({})
   const [oppositeBombPosition, setOppositeBombPosition] = useState({x: 0, y: 0})
   const [bombPosition, setBombPosition] = useState({x: 0, y: 0})
-  const [bombUsed, setBombUsed] = useState(false)
   const [oppositePosition, setOppositePosition] = useState({})
   const [oppositeHasBomb, setOppositeHasBomb] = useState(false)
+
+  const [goal, setGoal] = useState({x: -90, y: -90})
+  const [oppositeGoal, setOppositeGoal] = useState({x: -90, y: -90})
+
+  const [bounds, setBounds] = useState({
+    width: Math.floor(document.documentElement.clientWidth / gridSize) * gridSize,
+    height: Math.floor(document.documentElement.clientHeight / gridSize) * gridSize,
+  })
   const [voidPositions, setVoidPositions] = useState([{x: -gridSize, y: -gridSize}])
 
+  // update bounds based on page resize
+  useEffect(() => {
+    const resize = () => {
+      setBounds({
+        width: Math.floor(window.innerWidth / gridSize) * gridSize,
+        height: Math.floor(window.innerHeight / gridSize) * gridSize,
+      })
+    }
+    window.addEventListener('resize', resize)
+    return () => window.removeEventListener('resize', resize)
+  },[])
+
   // Wall position and dimensions AND hero, oppositeBomb, bomb, opposite, wall hole placements
-  useLayoutEffect(() => {
+  useEffect(() => {
     const horizontal = Math.floor(Math.random() * 2)
     const dimensions = () => {
       return horizontal ? {
@@ -69,9 +83,7 @@ const Board = ({ setLose, setWin}) => {
       y: wallY,
     })
 
-    console.log(horizontal, wallX, wallY)
-
-    // place Hero, oppositeBomb, Bomb, wall hole, and Opposite based on wall position
+    // place pieces based on wall position
     if (horizontal) {
       // hero
       const hero = {
@@ -104,6 +116,10 @@ const Board = ({ setLose, setWin}) => {
       //wall hole
       const wallHoleX = randomOnGrid(gridCount)
       setWallHole({x:wallHoleX,y: wallY})
+      // goal
+      setGoal({x: randomOnGrid(gridCount), y: randomOnGrid(gridCount, (wallY / gridSize))})
+      // opposite goal
+      setOppositeGoal({x: randomOnGrid(gridCount), y: randomOnGrid(wallY / gridSize)})
     } else {
       const hero = {
         x: randomOnGrid(wallX / gridSize),
@@ -134,6 +150,10 @@ const Board = ({ setLose, setWin}) => {
       //wall hole
       const wallHoleY = randomOnGrid(gridCount)
       setWallHole({x:wallX,y: wallHoleY})
+      // goal
+      setGoal({x: randomOnGrid(gridCount, (wallX / gridSize)), y: randomOnGrid(gridCount)})
+      // opposite goal
+      setOppositeGoal({x: randomOnGrid(wallX / gridSize), y: randomOnGrid(gridCount)})
     }
 
   },[])
@@ -246,25 +266,29 @@ const Board = ({ setLose, setWin}) => {
     return () => document.removeEventListener('keypress', handleMove)
   },[canMove])
 
-  // hero gets bomb
+  // hero and opposite get bombs
   useEffect(() => {
-    // bomb
     if (position.x === bombPosition.x && position.y === bombPosition.y) setHasBomb(true)
-  },[position])
-
-  // opposite gets bomb
-  useEffect(() => {
     if (oppositePosition.x === oppositeBombPosition.x && oppositePosition.y === oppositeBombPosition.y) setOppositeHasBomb(true)
-  },[oppositePosition])
+  },[position, oppositePosition])
+
+  useEffect(() => {
+    position.x === goal.x && position.y === goal.y && console.log('position: ',position, 'goal: ', goal)
+    if (position.x === goal.x && position.y === goal.y && oppositePosition.x === oppositeGoal.x && oppositePosition.y === oppositeGoal.y) {
+      setWin(true)
+    }
+  },[position, oppositePosition])
 
   return (
     <div className="Board" style={{height: bounds.height, width: bounds.width}}>
       <Opposite position={oppositePosition} hasBomb={oppositeHasBomb} />
-      <Hero position={position} hasBomb={hasBomb && !bombUsed} />
+      <Hero position={position} hasBomb={hasBomb} />
       <Wall position={wallPosition} dimensions={wallDimensions} />
       {!oppositeHasBomb && <OtherBomb position={oppositeBombPosition} />}
-      {!hasBomb && !bombUsed && <Bomb position={bombPosition} />}
+      {!hasBomb && <Bomb position={bombPosition} />}
       {wallHole.x > 0 && <WallHole position={wallHole} />}
+      <Goal position={goal} />
+      <OppositeGoal position={oppositeGoal} />
     </div>
   )
 }

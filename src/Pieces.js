@@ -43,12 +43,12 @@ export const WallHole = ({ position }) => {
 
 export const Goal = ({position}) => {
   return (
-    <div className="Goal" style={{...standardStyles, top: position.y, left: position.x}}>⚙️</div>
+    <div className="Goal" style={{...standardStyles, top: position.y, left: position.x}}>🏦</div>
   )
 }
 
 export const OppositeGoal = ({position}) => {
   return (
-    <div className="Goal opposite--Goal" style={{...standardStyles, top: position.y, left: position.x}}>⚙️</div>
+    <div className="Goal opposite--Goal" style={{...standardStyles, top: position.y, left: position.x}}>🏦</div>
   )
 }

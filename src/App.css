@@ -61,6 +61,15 @@
   position: absolute;
 }
 
+.Goal, .Goal.opposite--Goal {
+  position: absolute;
+  background: rgb(193, 138, 238);
+}
+
+.Goal {
+  background: rgb(138, 210, 238);
+}
+
 .Winner {
   background: white;
   border-radius: 5px;
