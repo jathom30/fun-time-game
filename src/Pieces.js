@@ -29,9 +29,9 @@ export const Hero = ({ position, hasBomb, hasOtherBomb }) => {
   )
 }
 
-export const Enemy = ({ position, hasBomb }) => {
+export const Opposite = ({ position, hasBomb }) => {
   return (
-    <div style={{...standardStyles, top: position.y, left: position.x}} className={`Enemy ${hasBomb ? 'has-bomb' : ''}`}>👺</div>
+    <div style={{...standardStyles, top: position.y, left: position.x}} className={`Opposite ${hasBomb ? 'has-bomb' : ''}`}>🦸‍♀️</div>
   )
 }
 

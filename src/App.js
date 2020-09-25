@@ -1,5 +1,5 @@
 import React, { useEffect, useLayoutEffect, useState } from 'react';
-import { Bomb, OtherBomb, Wall, Hero, Enemy, WallHole } from './Pieces'
+import { Bomb, OtherBomb, Wall, Hero, Opposite, WallHole } from './Pieces'
 import { Winner } from './Winner'
 import { Loser } from './Loser'
 import './App.css';
@@ -17,15 +17,15 @@ const Board = ({ setLose, setWin}) => {
   const [otherBombPosition, setOtherBombPosition] = useState({x: 0, y: 0})
   const [bombPosition, setBombPosition] = useState({x: 0, y: 0})
   const [bombUsed, setBombUsed] = useState(false)
-  const [enemyPosition, setEnemyPosition] = useState({})
-  const [enemyHasBomb, setEnemyHasBomb] = useState(false)
+  const [oppositePosition, setOppositePosition] = useState({})
+  const [oppositeHasBomb, setOppositeHasBomb] = useState(false)
   const [voidPositions, setVoidPositions] = useState([{x: -gridSize, y: -gridSize}])
   const [bounds, setBounds] = useState({
     width: Math.floor(document.documentElement.clientWidth / gridSize) * gridSize,
     height: Math.floor(document.documentElement.clientHeight / gridSize) * gridSize,
   })
 
-  // Wall position and dimensions AND hero, otherBomb, bomb, enemy placements
+  // Wall position and dimensions AND hero, otherBomb, bomb, opposite placements
   useLayoutEffect(() => {
     const horizontal = Math.floor(Math.random() * 2)
     const dimensions = () => {
@@ -68,7 +68,7 @@ const Board = ({ setLose, setWin}) => {
       y: wallY,
     })
 
-    // place Hero, otherBomb, Bomb, and Enemy based on wall position
+    // place Hero, otherBomb, Bomb, and Opposite based on wall position
     if (horizontal) {
       // hero
       const hero = {
@@ -91,13 +91,13 @@ const Board = ({ setLose, setWin}) => {
         x: bombX + gridSize, y: bombY + gridSize,
       } : {x: bombX, y: bombY}
       setBombPosition(bomb)
-      // enemy
-      const enemyX = randomOnGrid(gridCount)
-      const enemyY = randomOnGrid(gridCount, (wallY / gridSize))
-      const enemy = enemyX === otherBombX && enemyY === otherBombY ? {
-        x: enemyX + gridSize, y: enemyY + gridSize,
-      } : {x: enemyX, y: enemyY}
-      setEnemyPosition(enemy)
+      // opposite
+      const oppositeX = randomOnGrid(gridCount)
+      const oppositeY = randomOnGrid(gridCount, (wallY / gridSize))
+      const opposite = oppositeX === otherBombX && oppositeY === otherBombY ? {
+        x: oppositeX + gridSize, y: oppositeY + gridSize,
+      } : {x: oppositeX, y: oppositeY}
+      setOppositePosition(opposite)
     } else {
       const hero = {
         x: randomOnGrid(wallX / gridSize),
@@ -118,13 +118,13 @@ const Board = ({ setLose, setWin}) => {
         x: bombX + gridSize, y: bombY + gridSize,
       } : {x: bombX, y: bombY}
       setBombPosition(bomb)
-      // enemy
-      const enemyX = randomOnGrid(gridCount, (wallX / gridSize))
-      const enemyY = randomOnGrid(gridCount)
-      const enemy = enemyX === otherBombX && enemyY === otherBombY ? {
-        x: enemyX + gridSize, y: enemyY + gridSize,
-      } : {x: enemyX, y: enemyY}
-      setEnemyPosition(enemy)
+      // opposite
+      const oppositeX = randomOnGrid(gridCount, (wallX / gridSize))
+      const oppositeY = randomOnGrid(gridCount)
+      const opposite = oppositeX === otherBombX && oppositeY === otherBombY ? {
+        x: oppositeX + gridSize, y: oppositeY + gridSize,
+      } : {x: oppositeX, y: oppositeY}
+      setOppositePosition(opposite)
     }
 
   },[])
@@ -164,16 +164,16 @@ const Board = ({ setLose, setWin}) => {
             return true
         }
       }
-      const checkEnemyMove = (key) => {
+      const checkOppositeMove = (key) => {
         switch (key) {
           case 'w':
-            return voidPositions.some(xy => xy.y === enemyPosition.y + gridSize && xy.x === enemyPosition.x)
+            return voidPositions.some(xy => xy.y === oppositePosition.y + gridSize && xy.x === oppositePosition.x)
           case 's':
-            return voidPositions.some(xy => xy.y === (enemyPosition.y - gridSize) && xy.x === enemyPosition.x)
+            return voidPositions.some(xy => xy.y === (oppositePosition.y - gridSize) && xy.x === oppositePosition.x)
           case 'a':
-            return voidPositions.some(xy => xy.x === enemyPosition.x + gridSize && xy.y === enemyPosition.y)
+            return voidPositions.some(xy => xy.x === oppositePosition.x + gridSize && xy.y === oppositePosition.y)
           case 'd':
-            return voidPositions.some(xy => xy.x === enemyPosition.x - gridSize && xy.y === enemyPosition.y)
+            return voidPositions.some(xy => xy.x === oppositePosition.x - gridSize && xy.y === oppositePosition.y)
           default:
             return true
         }
@@ -185,9 +185,9 @@ const Board = ({ setLose, setWin}) => {
             ...prevPos,
             y: prevPos.y >= gridSize && !checkMove(e.key) ? prevPos.y - gridSize : prevPos.y
           }))
-          setEnemyPosition(prevPos => ({
+          setOppositePosition(prevPos => ({
             ...prevPos,
-            y: (prevPos.y + (gridSize * 2)) <= bounds.height && !checkEnemyMove(e.key) ? prevPos.y + gridSize : prevPos.y
+            y: (prevPos.y + (gridSize * 2)) <= bounds.height && !checkOppositeMove(e.key) ? prevPos.y + gridSize : prevPos.y
           }))
           break
         case 's':
@@ -195,9 +195,9 @@ const Board = ({ setLose, setWin}) => {
             ...prevPos,
             y: prevPos.y <= bounds.height - (gridSize * 2) && !checkMove(e.key) ? prevPos.y + gridSize : prevPos.y
           }))
-          setEnemyPosition(prevPos => ({
+          setOppositePosition(prevPos => ({
             ...prevPos,
-            y: prevPos.y >= gridSize && !checkEnemyMove(e.key) ? prevPos.y - gridSize : prevPos.y
+            y: prevPos.y >= gridSize && !checkOppositeMove(e.key) ? prevPos.y - gridSize : prevPos.y
           }))
           break
         case 'a':
@@ -205,9 +205,9 @@ const Board = ({ setLose, setWin}) => {
             ...prevPos,
             x: prevPos.x >= gridSize && !checkMove(e.key) ? prevPos.x - gridSize : prevPos.x
           }))
-          setEnemyPosition(prevPos => ({
+          setOppositePosition(prevPos => ({
             ...prevPos,
-            x: prevPos.x <= bounds.width - (gridSize * 2) && !checkEnemyMove(e.key) ? prevPos.x + gridSize : prevPos.x
+            x: prevPos.x <= bounds.width - (gridSize * 2) && !checkOppositeMove(e.key) ? prevPos.x + gridSize : prevPos.x
           }))
           break
         case 'd':
@@ -215,9 +215,9 @@ const Board = ({ setLose, setWin}) => {
             ...prevPos,
             x: prevPos.x <= bounds.width - (gridSize * 2) && !checkMove(e.key) ? prevPos.x + gridSize : prevPos.x
           }))
-          setEnemyPosition(prevPos => ({
+          setOppositePosition(prevPos => ({
             ...prevPos,
-            x: prevPos.x >= gridSize && !checkEnemyMove(e.key) ? prevPos.x - gridSize : prevPos.x
+            x: prevPos.x >= gridSize && !checkOppositeMove(e.key) ? prevPos.x - gridSize : prevPos.x
           }))
           break
         default: 
@@ -268,31 +268,31 @@ const Board = ({ setLose, setWin}) => {
     if (bombUsed) setVoidPositions(prevVoid => prevVoid.filter(coord => !(coord.x === wallHole.x && coord.y === wallHole.y)))
   },[bombUsed])
 
-  // enemy gets bomb
+  // opposite gets bomb
   useEffect(() => {
-    if (enemyPosition.x === otherBombPosition.x && enemyPosition.y === otherBombPosition.y) setEnemyHasBomb(true)
-  },[enemyPosition])
+    if (oppositePosition.x === otherBombPosition.x && oppositePosition.y === otherBombPosition.y) setOppositeHasBomb(true)
+  },[oppositePosition])
 
-  // touch enemy
+  // touch opposite
   useEffect(() => {
     if (hasOtherBomb) {
-      if (position.x === enemyPosition.x && position.y === enemyPosition.y) {
+      if (position.x === oppositePosition.x && position.y === oppositePosition.y) {
         setWin(true)
       }
     }
-    if (enemyHasBomb) {
-      if (position.x === enemyPosition.x && position.y === enemyPosition.y) {
+    if (oppositeHasBomb) {
+      if (position.x === oppositePosition.x && position.y === oppositePosition.y) {
         setLose(true)
       }
     }
-  },[position, enemyPosition])
+  },[position, oppositePosition])
 
   return (
     <div className="Board" style={{height: bounds.height, width: bounds.width}}>
-      <Enemy position={enemyPosition} hasBomb={enemyHasBomb} />
+      <Opposite position={oppositePosition} hasBomb={oppositeHasBomb} />
       <Hero position={position} hasBomb={hasBomb && !bombUsed} hasOtherBomb={hasOtherBomb}  />
       <Wall position={wallPosition} dimensions={wallDimensions} />
-      {!(hasOtherBomb || enemyHasBomb) && <OtherBomb position={otherBombPosition} />}
+      {!(hasOtherBomb || oppositeHasBomb) && <OtherBomb position={otherBombPosition} />}
       {!hasBomb && !bombUsed && <Bomb position={bombPosition} />}
       {wallHole.x && <WallHole position={wallHole} />}
     </div>
