@@ -1,3 +1,7 @@
+:root {
+  --height: 10px;
+}
+
 .App {
   min-height: 100vh;
   background: rgb(23, 3, 56);
@@ -24,23 +28,36 @@
 }
 
 .Hero, .Opposite {
-  background: rgb(138, 238, 188);
+  background: rgb(138, 210, 238);
   transition: all .2s ease;
   z-index: 1;
 }
+
+.Opposite {
+  background: rgb(193, 138, 238);
+}
+
+.Bomb {
+  background: rgb(138, 210, 238);
+}
+.Bomb.opposite--Bomb {
+  background: rgb(193, 138, 238);
+}
+
 .Hero.has-bomb::after, .Opposite.has-bomb::after {
   content: '💣' ;
   position: absolute;
   bottom: 0;
   right: 0;
-  width: 10px;
-  height: 10px;
-  line-height: 10px;
+  width: calc(var(--height)/2);
+  height: calc(var(--height)/2);
+  font-size: var(--height);
+  line-height: var(--height);
 }
 
 
 .WallHole {
-  background: rgba(54, 11, 11, 0.75);
+  background: rgb(31, 26, 46);
   position: absolute;
 }
 
