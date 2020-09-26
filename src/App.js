@@ -1,12 +1,11 @@
-import React, { useContext, useState } from 'react';
-import { Wall, WallHole, Item } from './Pieces'
-import { Winner } from './Winner'
-import { Loser } from './Loser'
+import React, { useContext } from 'react';
+import { Wall, WallHole, Item, WinLose } from './_components'
 import './App.css';
 import { PositionContext, PositionContextProvider } from './PositionContext';
 
 const Board = () => {
   const { 
+    setReset,
     win, 
     lose,
     wall, 
@@ -24,7 +23,11 @@ const Board = () => {
   
 
   return (
-    win ? <Winner /> : lose ? <Loser /> : (
+    win ? (
+    <WinLose header="Amazing!" byline="You've Won!" />
+    ) : lose ? (
+    <WinLose header="Well, dern." byline="You've lost..." />
+      ) : (
       <div className="Board" style={{height: bounds.height, width: bounds.width}}>
         <Wall position={wall.position} dimensions={wall.dimensions} />
         <WallHole position={wallHole.position} />

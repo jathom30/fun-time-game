@@ -15,6 +15,7 @@ document.documentElement.style.setProperty('--height', gridSize/2+'px')
 
 export const PositionContext = React.createContext({})
 export const PositionContextProvider = ({ children }) => {
+  const [reset, setReset] = useState(true)
   const [win, setWin] = useState(false)
   const [lose, setLose] = useState(false)
     const [wall, setWall] = useState({
@@ -121,27 +122,32 @@ export const PositionContextProvider = ({ children }) => {
 
   // game board setup
   useLayoutEffect(() => {
-    const wall = applyWall(bounds, gridSize, gridWidthCount, gridHeightCount)
-    setWall(wall)
-    const wallHole = applyWallHole(wall, gridSize, gridWidthCount, gridHeightCount, bounds)
-    setWallHole(wallHole)
-    const hero = applyCharacter(true, wall)
-    setHero(hero)
-    const heroItem = applyItem(true, wall, [hero])
-    setHeroItem(heroItem)
-    const opposite = applyCharacter(false, wall)
-    setOpposite(opposite)
-    const oppositeItem = applyItem(false, wall, [opposite])
-    setOppositeItem(oppositeItem)
-    const heroGoal = applyItem(false, wall, [opposite, oppositeItem])
-    setHeroGoal(heroGoal)
-    const oppositeGoal = applyItem(true, wall, [hero, heroItem])
-    setOppositeGoal(oppositeGoal)
-    const heroHazard = applyItem(true, wall, [hero, heroItem, oppositeGoal])
-    setHeroHazard(heroHazard)
-    const oppositeHazard = applyItem(false, wall, [opposite, oppositeItem, heroGoal])
-    setOppositeHazard(oppositeHazard)
-  },[])
+    if (reset) {
+      const wall = applyWall(bounds, gridSize, gridWidthCount, gridHeightCount)
+      setWall(wall)
+      const wallHole = applyWallHole(wall, gridSize, gridWidthCount, gridHeightCount, bounds)
+      setWallHole(wallHole)
+      const hero = applyCharacter(true, wall)
+      setHero(hero)
+      const heroItem = applyItem(true, wall, [hero])
+      setHeroItem(heroItem)
+      const opposite = applyCharacter(false, wall)
+      setOpposite(opposite)
+      const oppositeItem = applyItem(false, wall, [opposite])
+      setOppositeItem(oppositeItem)
+      const heroGoal = applyItem(false, wall, [opposite, oppositeItem])
+      setHeroGoal(heroGoal)
+      const oppositeGoal = applyItem(true, wall, [hero, heroItem])
+      setOppositeGoal(oppositeGoal)
+      const heroHazard = applyItem(true, wall, [hero, heroItem, oppositeGoal])
+      setHeroHazard(heroHazard)
+      const oppositeHazard = applyItem(false, wall, [opposite, oppositeItem, heroGoal])
+      setOppositeHazard(oppositeHazard)
+      setReset(false)
+      setWin(false)
+      setLose(false)
+    }
+  },[reset])
 
   // update bounds and item positions on resize
   useEffect(() => {
@@ -372,19 +378,25 @@ export const PositionContextProvider = ({ children }) => {
     return () => document.removeEventListener('keypress', handleMove)
   },[canMove])
 
-  // hero and opposite get their items or touch hazards
+  // hero and opposite get their items
   useEffect(() => {
     if (sameSpaceCheck(hero, heroItem)) setHero(prev => ({...prev, hasItem: true}))
     if (sameSpaceCheck(opposite, oppositeItem)) setOpposite(prev => ({...prev, hasItem: true}))
-    if (sameSpaceCheck(hero, heroHazard) || sameSpaceCheck(hero, oppositeHazard) || sameSpaceCheck(opposite, heroHazard) || sameSpaceCheck(opposite, oppositeHazard)) setLose(true)
   },[hero.position, opposite.position])
-
+  
+  // handle win and lose conditions
   useEffect(() => {
-    if (hero.position.x === heroGoal.position.x && hero.position.y === heroGoal.position.y && opposite.position.x === oppositeGoal.position.x && opposite.position.y === oppositeGoal.position.y) {
+    if (sameSpaceCheck(hero,heroGoal) && sameSpaceCheck(opposite, oppositeGoal)) {
       setCanMove(false)
       setTimeout(() => {
         setWin(true)
-      },500)
+      }, 200)
+    }
+    if (sameSpaceCheck(hero, heroHazard) || sameSpaceCheck(hero, oppositeHazard) || sameSpaceCheck(opposite, heroHazard) || sameSpaceCheck(opposite, oppositeHazard)) {
+      setCanMove(false)
+      setTimeout(() => {
+        setLose(true)
+      }, 200);
     }
   },[hero.position, opposite.position])
 
@@ -393,6 +405,8 @@ export const PositionContextProvider = ({ children }) => {
       value={{
         win,
         lose,
+        reset,
+        setReset,
 
         wall,
         wallHole,

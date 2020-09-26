@@ -83,7 +83,7 @@
   background: rgb(5, 46, 179);
 }
 
-.Winner, .Loser {
+.WinLose {
   background: white;
   border-radius: 5px;
   position: fixed;
@@ -95,7 +95,22 @@
   color: rgb(55, 17, 116);
 }
 
-.Winner h1, .Loser h1 {
+.WinLose h1 {
   font-weight: bold;
   font-size: 50px;
+}
+
+.repeatBtn {
+  border: none;
+  padding: 20px 40px;
+  border-radius: 5px;
+  color: white;
+  font-weight: bold;
+  background: rgb(55, 17, 116);
+  cursor: pointer;
+  width: 100%;
+}
+
+.repeatBtn:hover {
+  background: rgb(30, 5, 70);
 }
