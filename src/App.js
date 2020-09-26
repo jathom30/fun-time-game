@@ -1,12 +1,14 @@
 import React, { useContext, useState } from 'react';
 import { HeroItem, OppositeItem, Wall, Hero, Opposite, WallHole, Goal, OppositeGoal, HeroHazard, OppositeHazard } from './Pieces'
 import { Winner } from './Winner'
+import { Loser } from './Loser'
 import './App.css';
 import { PositionContext, PositionContextProvider } from './PositionContext';
 
 const Board = () => {
   const { 
     win, 
+    lose,
     wall, 
     bounds, 
     wallHole, 
@@ -22,7 +24,7 @@ const Board = () => {
   
 
   return (
-    win ? <Winner /> : (
+    win ? <Winner /> : lose ? <Loser /> : (
       <div className="Board" style={{height: bounds.height, width: bounds.width}}>
         <Wall position={wall.position} dimensions={wall.dimensions} />
         <WallHole position={wallHole.position} />

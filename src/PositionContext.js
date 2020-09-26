@@ -6,7 +6,8 @@ import {
   createWallDimensions, 
   ratioXY, 
   findRatioLocation,
-  setLocationOnRatio,
+  setLocationOnRatio, 
+  sameSpaceCheck
 } from './helpers'
 
 const gridSize = 60
@@ -373,10 +374,9 @@ export const PositionContextProvider = ({ children }) => {
 
   // hero and opposite get their items or touch hazards
   useEffect(() => {
-    if (hero.position.x === heroItem.position.x && hero.position.y === heroItem.position.y) setHero(prev => ({...prev, hasItem: true}))
-    if (hero.position.x === heroHazard.position.x && hero.position.y === heroHazard.position.y) setLose(true)
-    if (opposite.position.x === oppositeItem.position.x && opposite.position.y === oppositeItem.position.y) setOpposite(prev => ({...prev, hasItem: true}))
-    if (opposite.position.x === heroHazard.position.x && opposite.position.y === heroHazard.position.y) setLose(true)
+    if (sameSpaceCheck(hero, heroItem)) setHero(prev => ({...prev, hasItem: true}))
+    if (sameSpaceCheck(opposite, oppositeItem)) setOpposite(prev => ({...prev, hasItem: true}))
+    if (sameSpaceCheck(hero, heroHazard) || sameSpaceCheck(hero, oppositeHazard) || sameSpaceCheck(opposite, heroHazard) || sameSpaceCheck(opposite, oppositeHazard)) setLose(true)
   },[hero.position, opposite.position])
 
   useEffect(() => {

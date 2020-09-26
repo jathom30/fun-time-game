@@ -21,3 +21,6 @@ export const setLocationOnRatio = (prevItem, width, height, gridSize, wall, hero
     y: y === wall.position.y ? hero ? y - gridSize : y + gridSize : y
   },
 }}
+
+export const sameSpaceCheck = (first, second) => 
+  first.position.x === second.position.x && first.position.y === second.position.y
