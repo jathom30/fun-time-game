@@ -19,7 +19,7 @@
   position: absolute;
 }
 
-.Bomb, .Hero, .Opposite {
+.HeroItem, .Hero, .Opposite {
   border-radius: 50%;
   position: absolute;
   display: flex;
@@ -37,14 +37,14 @@
   background: rgb(193, 138, 238);
 }
 
-.Bomb {
+.HeroItem {
   background: rgb(138, 210, 238);
 }
-.Bomb.opposite--Bomb {
+.HeroItem.opposite--HeroItem {
   background: rgb(193, 138, 238);
 }
 
-.Hero.has-bomb::after, .Opposite.has-bomb::after {
+.Hero.has-item::after, .Opposite.has-item::after {
   content: '💣' ;
   position: absolute;
   bottom: 0;

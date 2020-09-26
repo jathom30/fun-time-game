@@ -5,15 +5,15 @@ const standardStyles = {
   height: gridSize, width: gridSize, fontSize: gridSize, lineHeight: gridSize,
 }
 
-export const Bomb = ({ position }) => {
+export const HeroItem = ({ position }) => {
   return (
-    <div className="Bomb" style={{ ...standardStyles, top: position.y, left: position.x}}>💣</div>
+    <div className="HeroItem" style={{ ...standardStyles, top: position.y, left: position.x}}>💣</div>
   )
 }
 
-export const OtherBomb = ({ position }) => {
+export const OppositeItem = ({ position }) => {
   return (
-    <div className="Bomb opposite--Bomb" style={{ ...standardStyles, top: position.y, left: position.x}}>💣</div>
+    <div className="HeroItem opposite--HeroItem" style={{ ...standardStyles, top: position.y, left: position.x}}>💣</div>
   )
 }
 
@@ -23,15 +23,15 @@ export const Wall = ({ position, dimensions }) => {
   )
 }
 
-export const Hero = ({ position, hasBomb }) => {
+export const Hero = ({ position, hasItem }) => {
   return (
-    <div style={{...standardStyles, top: position.y, left: position.x}} className={`Hero ${hasBomb ? 'has-bomb' : ''}`}>🦸‍♂️</div>
+    <div style={{...standardStyles, top: position.y, left: position.x}} className={`Hero ${hasItem ? 'has-item' : ''}`}>🦸‍♂️</div>
   )
 }
 
-export const Opposite = ({ position, hasBomb }) => {
+export const Opposite = ({ position, hasItem }) => {
   return (
-    <div style={{...standardStyles, top: position.y, left: position.x}} className={`Opposite ${hasBomb ? 'has-bomb' : ''}`}>🦸‍♀️</div>
+    <div style={{...standardStyles, top: position.y, left: position.x}} className={`Opposite ${hasItem ? 'has-item' : ''}`}>🦸‍♀️</div>
   )
 }
 
