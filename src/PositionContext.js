@@ -142,11 +142,21 @@ export const PositionContextProvider = ({ children }) => {
       setBounds(bounds)
       const wallX = Math.floor(width * wall.ratio / gridSize) * gridSize
       const wallY = Math.floor(height * wall.ratio / gridSize) * gridSize
+      const keepWallFromEdge = (horizontal, space) => {
+        const direction = horizontal ? 'height' : 'width'
+        if (space === bounds[direction] || space === bounds[direction] - gridSize || space === bounds[direction] - gridSize * 2) {
+          return bounds[direction] - gridSize * 3
+        } else if (space === 0 || space === gridSize) {
+          return gridSize * 2
+        } else {
+          return space
+        }
+      }
       setWall(prevWall => ({
         ...prevWall,
         position: {
-          x: !prevWall.horizontal ? wallX : prevWall.position.x,
-          y: prevWall.horizontal ? wallY : prevWall.position.y,
+          x: !prevWall.horizontal ? keepWallFromEdge(false, wallX)  : prevWall.position.x,
+          y: prevWall.horizontal ? keepWallFromEdge(true, wallY) : prevWall.position.y,
         },
         dimensions: createWallDimensions(prevWall.horizontal, bounds, gridSize)
       }))
@@ -220,68 +230,116 @@ export const PositionContextProvider = ({ children }) => {
 
       switch (e.key) {
         case 'w':
-          setHero(prev => ({
+          setHero(prev => {
+            const y = prev.position.y >= gridSize && !checkMove(e.key) ? prev.position.y - gridSize : prev.position.y
+            return {
             ...prev,
             position: {
               ...prev.position,
-              y: prev.position.y >= gridSize && !checkMove(e.key) ? prev.position.y - gridSize : prev.position.y
+              y
+            },
+            ratio: {
+              x: prev.position.x / bounds.width,
+              y: y / bounds.height,
             }
-          }))
-          setOpposite(prev => ({
+          }})
+          setOpposite(prev => {
+            const y = (prev.position.y + (gridSize * 2)) <= bounds.height && !checkOppositeMove(e.key) ? prev.position.y + gridSize : prev.position.y
+            return {
             ...prev,
             position: {
               ...prev.position,
-              y: (prev.position.y + (gridSize * 2)) <= bounds.height && !checkOppositeMove(e.key) ? prev.position.y + gridSize : prev.position.y
+              y
+            },
+            ratio: {
+              x: prev.position.x / bounds.width,
+              y: y / bounds.height,
             }
-          }))
+          }})
           break
         case 's':
-          setHero(prev => ({
+          setHero(prev => {
+            const y = prev.position.y <= bounds.height - (gridSize * 2) && !checkMove(e.key) ? prev.position.y + gridSize : prev.position.y
+            return {
             ...prev,
             position: {
               ...prev.position,
-              y: prev.position.y <= bounds.height - (gridSize * 2) && !checkMove(e.key) ? prev.position.y + gridSize : prev.position.y
+              y
+            },
+            ratio: {
+              x: prev.ratio.x,
+              y: y / bounds.height
             }
-          }))
-          setOpposite(prev => ({
+          }})
+          setOpposite(prev => {
+            const y = prev.position.y >= gridSize && !checkOppositeMove(e.key) ? prev.position.y - gridSize : prev.position.y
+            return {
             ...prev,
             position: {
               ...prev.position,
-              y: prev.position.y >= gridSize && !checkOppositeMove(e.key) ? prev.position.y - gridSize : prev.position.y
+              y
+            },
+            ratio: {
+              x: prev.ratio.x,
+              y: y / bounds.height
             }
-          }))
+          }})
           break
         case 'a':
-          setHero(prev => ({
+          setHero(prev => {
+            const x = prev.position.x >= gridSize && !checkMove(e.key) ? prev.position.x - gridSize : prev.position.x
+            return {
             ...prev,
             position: {
               ...prev.position,
-              x: prev.position.x >= gridSize && !checkMove(e.key) ? prev.position.x - gridSize : prev.position.x
+              x
+            },
+            ratio: {
+              x: x / bounds.width,
+              y: prev.ratio.y,
             }
-          }))
-          setOpposite(prev => ({
+          }})
+          setOpposite(prev => {
+            const x = prev.position.x <= bounds.width - (gridSize * 2) && !checkOppositeMove(e.key) ? prev.position.x + gridSize : prev.position.x
+            return {
             ...prev,
             position: {
               ...prev.position,
-              x: prev.position.x <= bounds.width - (gridSize * 2) && !checkOppositeMove(e.key) ? prev.position.x + gridSize : prev.position.x
+              x
+            },
+            ratio: {
+              x: x / bounds.width,
+              y: prev.ratio.y
             }
-          }))
+          }})
           break
         case 'd':
-          setHero(prev => ({
+          setHero(prev => {
+            const x = prev.position.x <= bounds.width - (gridSize * 2) && !checkMove(e.key) ? prev.position.x + gridSize : prev.position.x
+            return {
             ...prev,
             position: {
               ...prev.position,
-              x: prev.position.x <= bounds.width - (gridSize * 2) && !checkMove(e.key) ? prev.position.x + gridSize : prev.position.x
+              x
+            },
+            ratio: {
+              x: x / bounds.width,
+              y: prev.ratio.y
             }
-          }))
-          setOpposite(prev => ({
+          }})
+          setOpposite(prev => {
+            const x = prev.position.x >= gridSize && !checkOppositeMove(e.key) ? prev.position.x - gridSize : prev.position.x
+            return {
             ...prev,
             position: {
               ...prev.position,
-              x: prev.position.x >= gridSize && !checkOppositeMove(e.key) ? prev.position.x - gridSize : prev.position.x
+              x
+            },
+            ratio: {
+              x: x / bounds.width,
+              y: prev.ratio.y
             }
-          }))
+          }})
           break
         default: 
           break
