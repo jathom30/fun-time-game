@@ -31,11 +31,8 @@ export const applyWall = (bounds, gridSize, gridWidthCount, gridHeightCount) => 
   const x = horizontal ? 0 : wallCheck(randomOnGrid(gridSize, gridWidthCount), bounds.width, gridSize)
   const y = !horizontal ? 0 : wallCheck(randomOnGrid(gridSize, gridHeightCount), bounds.height, gridSize)
   const ratio = horizontal ? (y / bounds.height) : (x / bounds.width)
-
   return {
-    position: {
-      x, y,
-    },
+    position: { x, y },
     dimensions,
     ratio,
     horizontal: dimensions.width > dimensions.height,

@@ -140,8 +140,8 @@ export const PositionContextProvider = ({ children }) => {
         height: height < minDim ? minDim : height,
       }
       setBounds(bounds)
-      const wallX = Math.floor(width * wall.ratio / gridSize) * gridSize
-      const wallY = Math.floor(height * wall.ratio / gridSize) * gridSize
+      const wallX = findRatioLocation(width, wall.ratio, gridSize)
+      const wallY = findRatioLocation(height,wall.ratio, gridSize)
       const keepWallFromEdge = (horizontal, space) => {
         const direction = horizontal ? 'height' : 'width'
         if (space === bounds[direction] || space === bounds[direction] - gridSize || space === bounds[direction] - gridSize * 2) {
@@ -163,16 +163,16 @@ export const PositionContextProvider = ({ children }) => {
       setWallHole(prevHole => ({
         ...prevHole,
         position: {
-          x: wall.horizontal ? findRatioLocation(width, prevHole.ratio, gridSize) : wallX,
-          y: !wall.horizontal ? findRatioLocation(height, prevHole.ratio, gridSize) : wallY,
+          x: wall.horizontal ? findRatioLocation(width, prevHole.ratio, gridSize) : keepWallFromEdge(false, wallX),
+          y: !wall.horizontal ? findRatioLocation(height, prevHole.ratio, gridSize) : keepWallFromEdge(true, wallY),
         }
       }))
-      setHero(prev => setLocationOnRatio(prev, width, height, gridSize))
-      setHeroItem(prev => setLocationOnRatio(prev, width, height, gridSize))
-      setHeroGoal(prev => setLocationOnRatio(prev, width, height, gridSize))
-      setOpposite(prev => setLocationOnRatio(prev, width, height, gridSize))
-      setOppositeItem(prev => setLocationOnRatio(prev, width, height, gridSize))
-      setOppositeGoal(prev => setLocationOnRatio(prev, width, height, gridSize))
+      setHero(prev => setLocationOnRatio(prev, width, height, gridSize, wall, true))
+      setHeroItem(prev => setLocationOnRatio(prev, width, height, gridSize, wall, true))
+      setHeroGoal(prev => setLocationOnRatio(prev, width, height, gridSize, wall, false))
+      setOpposite(prev => setLocationOnRatio(prev, width, height, gridSize, wall, false))
+      setOppositeItem(prev => setLocationOnRatio(prev, width, height, gridSize, wall, false))
+      setOppositeGoal(prev => setLocationOnRatio(prev, width, height, gridSize, wall, true))
     }
 
     window.addEventListener('resize', resize)

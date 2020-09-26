@@ -10,10 +10,14 @@ export const ratioXY = (position, bounds) => {
 export const findRatioLocation = (length, ratio, gridSize) => 
   Math.floor(length * ratio / gridSize) * gridSize
 
-export const setLocationOnRatio = (prevItem, width, height, gridSize) => ({
+export const setLocationOnRatio = (prevItem, width, height, gridSize, wall, hero) => {
+  const x = findRatioLocation(width, prevItem.ratio.x, gridSize)
+  const y = findRatioLocation(height, prevItem.ratio.y, gridSize)
+  return {
   ...prevItem,
-  position: {
-    x: findRatioLocation(width, prevItem.ratio.x, gridSize),
-    y: findRatioLocation(height, prevItem.ratio.y, gridSize),
-  }
-})
+  position: { 
+    // if position is from hero side keep on hero side or visa versa
+    x: x === wall.position.x ? hero ? x - gridSize : x + gridSize : x,
+    y: y === wall.position.y ? hero ? y - gridSize : y + gridSize : y
+  },
+}}
