@@ -1,0 +1,43 @@
+.Home {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  max-width: 75vw;
+  margin: 0 auto;
+  .heroImg-Home {
+    width: 100%;
+    background: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: rgb(150, 169, 185);
+    height: 10rem;
+    text-align: center;
+    padding: 1rem;
+  }
+  .gameTitle-Home {
+    color: white;
+    margin: 2rem;
+    padding: 0;
+  }
+  .routes-Home {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1rem;
+    width: 50%;
+    .btn-routes {
+      background: white;
+      text-align: center;
+      text-decoration: none;
+      width: 100%;
+      padding: .75rem;
+      font-size: 1.25rem;
+      border: none;
+      border-radius: .25rem;
+      color: var(--color);
+      cursor: pointer;
+    }
+  }
+}

@@ -1,0 +1,25 @@
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300;700&display=swap');
+
+:root {
+  --height: 10px;
+  --darkTint: rgba(0,0,0,.1);
+  --color: rgb(55, 17, 116);
+}
+
+body, *, *:before, * :after {
+  box-sizing: border-box;
+}
+
+p, h1, h2, h3, h4, h5 {
+  margin: 0;
+  padding: 0;
+}
+
+html, body {
+  min-height: 100vh;
+}
+.App {
+  min-height: 100vh;
+  background: rgb(23, 3, 56);
+  font-family: 'Noto Sans JP', sans-serif;
+}

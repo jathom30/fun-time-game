@@ -69,7 +69,7 @@ export const PositionContextProvider = ({ children }) => {
 
   const [bounds, setBounds] = useState({
     width: Math.floor(document.documentElement.clientWidth / gridSize) * gridSize,
-    height: Math.floor(document.documentElement.clientHeight / gridSize) * gridSize,
+    height: Math.floor((document.documentElement.clientHeight - gridSize) / gridSize) * gridSize,
   })
   const [voidPositions, setVoidPositions] = useState([{x: -gridSize, y: -gridSize}])
 
@@ -154,7 +154,7 @@ export const PositionContextProvider = ({ children }) => {
     const resize = () => {
       const minDim = gridSize * 7
       const width = Math.floor(window.innerWidth / gridSize) * gridSize
-      const height = Math.floor(window.innerHeight / gridSize) * gridSize
+      const height = (Math.floor(window.innerHeight / gridSize) * gridSize) - gridSize
       const bounds = {
         width: width < minDim ? minDim : width,
         height: height < minDim ? minDim : height,
@@ -373,7 +373,7 @@ export const PositionContextProvider = ({ children }) => {
       setCanMove(false)
       setTimeout(() => setCanMove(true), 200)
     }
-    
+
     document.addEventListener('keypress', handleMove)
     return () => document.removeEventListener('keypress', handleMove)
   },[canMove])

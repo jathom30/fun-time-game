@@ -1,0 +1,138 @@
+.Board {
+  $wall: rgb(66, 63, 63);
+  margin: 0 auto;
+  border: 3px solid $wall;
+  position: relative;
+  background: rgb(31, 26, 46);
+  overflow: hidden;
+  background-image:
+  linear-gradient(45deg, var(--darkTint) 25%, transparent 25%), 
+  linear-gradient(-45deg, var(--darkTint) 25%, transparent 25%),
+  linear-gradient(45deg, transparent 75%, var(--darkTint) 75%),
+  linear-gradient(-45deg, transparent 75%, var(--darkTint) 75%);
+  background-size: calc(var(--height)*4) calc(var(--height)*4);
+  background-position:0px 0px, 0px calc(var(--height)*2), calc(var(--height)*2) calc(var(--height)* -2), calc(var(--height) * -2) 0px;
+  .Wall {
+    background: $wall;
+    position: absolute;
+    overflow: hidden;
+    &:after {
+      content: '';
+      position: absolute;
+      background: rgba(0,0,0,.1);
+      height: 100%;
+      width: 100%;
+      transform: translate(30px, 30px);
+    }
+  }
+  
+  
+  .HeroItem, .Hero, .Opposite, .HeroHazard, .HeroHazard.opposite--HeroHazard, .HeroGoal, .HeroGoal.opposite--HeroGoal {
+    border-radius: 50%;
+    position: absolute;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  .Hero, .Opposite {
+    background: rgb(138, 210, 238);
+    transition: all .2s ease;
+    z-index: 1;
+    &.has-item:after {
+      content: '🔑' ;
+      position: absolute;
+      bottom: 0;
+      right: 0;
+      width: calc(var(--height)/2);
+      height: calc(var(--height)/2);
+      font-size: var(--height);
+      line-height: var(--height);
+    }
+  }
+  
+  .Opposite {
+    background: rgb(193, 138, 238);
+  }
+  
+  .HeroItem {
+    background: rgb(138, 210, 238);
+    &.opposite--HeroItem {
+      background: rgb(193, 138, 238);
+    }
+  }
+  
+  .WallHole {
+    background: rgb(31, 26, 46);
+    position: absolute;
+  }
+  
+  .HeroGoal {
+    background: rgb(138, 210, 238);
+    &.opposite--HeroGoal {
+      background: rgb(193, 138, 238);
+    }
+  }
+  
+  
+  .HeroHazard {
+    background: rgb(179, 5, 5);
+    &.opposite--HeroHazard {
+      background: rgb(5, 46, 179);
+    }
+  }
+  
+}
+
+.WinLose {
+  background: white;
+  border-radius: .25rem;
+  max-width: 30rem;
+  width: 50vw;
+  min-width: 300px;
+  margin: 5rem auto 0;
+  padding: 1rem;
+  text-align: center;
+  color: rgb(55, 17, 116);
+  opacity: 0;
+  transition: all .2s ease;
+  h1 {
+    font-weight: bold;
+    font-size: 50px;
+    margin: 2rem;
+  }
+}
+
+.repeatBtn {
+  border: none;
+  padding: 20px 40px;
+  border-radius: 5px;
+  color: white;
+  font-weight: bold;
+  background: rgb(55, 17, 116);
+  cursor: pointer;
+  margin-top: 1rem;
+  width: 100%;
+  &:hover {
+    background: rgb(30, 5, 70);
+  }
+}
+
+.blow-up {
+  opacity: 1;
+}
+
+.BoardRoute {
+  .topBar-BoardRoute {
+    height: calc(var(--height) * 2);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin: 0 1rem;
+    .backBtn-topBar {
+      color: white;
+      text-decoration: none;
+      padding: 1rem;
+    }
+  }
+}
