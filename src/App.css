@@ -23,8 +23,18 @@
 }
 
 .Wall {
-  background: rgb(136, 10, 10);
+  background: rgb(66, 63, 63);
   position: absolute;
+  overflow: hidden;
+}
+
+.Wall::after {
+  content: '';
+  position: absolute;
+  background: rgba(0,0,0,.1);
+  height: 100%;
+  width: 100%;
+  transform: translate(30px, 30px);
 }
 
 .HeroItem, .Hero, .Opposite, .HeroHazard, .HeroHazard.opposite--HeroHazard, .HeroGoal, .HeroGoal.opposite--HeroGoal {
