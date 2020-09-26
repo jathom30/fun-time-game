@@ -14,6 +14,7 @@ export const HowTo = () => {
           <h1>tl;dr</h1>
           <p>Pick up your keys and get in your home without running into the cops.</p>
         </div>
+          <p className="label-wrapper">Instructions</p>
         <div className="instructions-wrapper">
           <div className="group-instructions">
             <p className="main-group">Simultaneously control two characters at once</p>
@@ -30,6 +31,17 @@ export const HowTo = () => {
           <div className="group-instructions">
             <p className="main-group">How to Lose:</p>
             <p>Run into the cops.</p>
+          </div>
+        </div>
+          <p className="label-wrapper">Notes</p>
+        <div className="notes-wrapper">
+          <div className="group-notes">
+            <p className="main-group">Experiment with screen size</p>
+            <p>The game's board will update your characters position based on the size of the screen. If it looks like it might help, expand your screen to give you more wiggle room or shrink your screen to bring your objective to you.</p>
+          </div>
+          <div className="group-notes">
+            <p className="main-group">Not all games are winnable</p>
+            <p>Due to the random generation of each board, not all games are winnable.</p>
           </div>
         </div>
       </div>

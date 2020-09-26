@@ -45,10 +45,13 @@ export const Board = () => {
 }
 
 export const BoardRoute = () => {
+  const {setReset} = useContext(PositionContext)
+
   return (
     <div className="BoardRoute">
       <div className="topBar-BoardRoute">
         <Link className="backBtn-topBar" to="/">Back to home</Link>
+        <button onClick={() => setReset(true)}>Reset game</button>
         <Link className="backBtn-topBar" to="/how-to">How to</Link>
       </div>
       <Board />

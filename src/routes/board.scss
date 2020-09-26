@@ -129,10 +129,15 @@
     align-items: center;
     justify-content: space-between;
     margin: 0 1rem;
-    .backBtn-topBar {
+    .backBtn-topBar, button {
       color: white;
       text-decoration: none;
       padding: 1rem;
+      background: transparent;
+      border: none;
+      font-size: 1rem;
+      font-weight: bold;
+      cursor: pointer;
     }
   }
 }

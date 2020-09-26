@@ -9,6 +9,8 @@
       color: white;
       text-decoration: none;
       padding: 1rem;
+      font-weight: bold;
+      cursor: pointer;
     }
   }
   .wrapper-HowTo {
@@ -19,6 +21,7 @@
       background: white;
       border-radius: .25rem;
       padding: 1rem;
+      margin-bottom: 1rem;
       text-align: center;
       color: rgb(55, 17, 116);
       h1 {
@@ -27,12 +30,41 @@
         margin: 1rem;
       }
     }
+    .label-wrapper {
+      color: white;
+      font-weight: bold;
+      margin-bottom: 1rem;
+    }
     .instructions-wrapper {
       display: grid;
       gap: 1rem;
       grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
       margin: 1rem 0;
       .group-instructions {
+        background: white;
+        color: var(--color);
+        padding: 1rem;
+        border-radius: .25rem;
+        p {
+          font-weight: normal;
+          &.main-group {
+            font-weight: bold;
+            margin-bottom: .5rem;
+            font-size: 1.25rem;
+          }
+        }
+      }
+    }
+    .notes-wrapper {
+      display: grid;
+      gap: 1rem;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      .label-notes {
+        color: white;
+        font-weight: bold;
+        margin-bottom: 1rem;
+      }
+      .group-notes {
         background: white;
         color: var(--color);
         padding: 1rem;
