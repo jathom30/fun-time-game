@@ -1,11 +1,24 @@
 import React, { useContext, useState } from 'react';
-import { HeroItem, OppositeItem, Wall, Hero, Opposite, WallHole, Goal, OppositeGoal } from './Pieces'
+import { HeroItem, OppositeItem, Wall, Hero, Opposite, WallHole, Goal, OppositeGoal, HeroHazard, OppositeHazard } from './Pieces'
 import { Winner } from './Winner'
 import './App.css';
 import { PositionContext, PositionContextProvider } from './PositionContext';
 
 const Board = () => {
-  const { win, wall, bounds, wallHole, hero, heroItem, opposite, oppositeItem, heroGoal, oppositeGoal } = useContext(PositionContext)
+  const { 
+    win, 
+    wall, 
+    bounds, 
+    wallHole, 
+    hero, 
+    heroItem, 
+    opposite, 
+    oppositeItem, 
+    heroGoal, 
+    oppositeGoal, 
+    heroHazard, 
+    oppositeHazard,
+  } = useContext(PositionContext)
   
 
   return (
@@ -19,6 +32,8 @@ const Board = () => {
         {!opposite.hasItem && <OppositeItem position={oppositeItem.position} />}
         <Goal position={heroGoal.position} />
         <OppositeGoal position={oppositeGoal.position} />
+        <HeroHazard position={heroHazard.position} />
+        <OppositeHazard position={oppositeHazard.position} />
       </div>
     )
   )
