@@ -103,6 +103,8 @@
   padding: 10px;
   text-align: center;
   color: rgb(55, 17, 116);
+  opacity: 0;
+  transition: all .2s ease;
 }
 
 .WinLose h1 {
@@ -123,4 +125,8 @@
 
 .repeatBtn:hover {
   background: rgb(30, 5, 70);
+}
+
+.blow-up {
+  opacity: 1;
 }
