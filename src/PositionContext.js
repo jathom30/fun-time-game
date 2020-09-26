@@ -139,9 +139,11 @@ export const PositionContextProvider = ({ children }) => {
       setHeroGoal(heroGoal)
       const oppositeGoal = applyItem(true, wall, [hero, heroItem])
       setOppositeGoal(oppositeGoal)
-      const heroHazard = applyItem(true, wall, [hero, heroItem, oppositeGoal])
+      console.log(wallHole.position, wall.horizontal)
+      const wallHoleSurrounds = wall.horizontal ? [{x: wallHole.position.x, y: wallHole.position.y - gridSize}, {x: wallHole.position.x, y: wallHole.position.y + gridSize}] : [{x: wallHole.position.x - gridSize, y: wallHole.position.y},{x: wallHole.position.x + gridSize, y: wallHole.position.y}]
+      const heroHazard = applyItem(true, wall, [hero, heroItem, oppositeGoal, ...wallHoleSurrounds])
       setHeroHazard(heroHazard)
-      const oppositeHazard = applyItem(false, wall, [opposite, oppositeItem, heroGoal])
+      const oppositeHazard = applyItem(false, wall, [opposite, oppositeItem, heroGoal, ...wallHoleSurrounds])
       setOppositeHazard(oppositeHazard)
       setReset(false)
       setWin(false)
@@ -153,12 +155,11 @@ export const PositionContextProvider = ({ children }) => {
   useEffect(() => {
     const resize = () => {
       const minDim = gridSize * 7
-      const width = Math.floor(window.innerWidth / gridSize) * gridSize
-      const height = (Math.floor(window.innerHeight / gridSize) * gridSize) - gridSize
-      const bounds = {
-        width: width < minDim ? minDim : width,
-        height: height < minDim ? minDim : height,
-      }
+      const testWidth = Math.floor(window.innerWidth / gridSize) * gridSize
+      const width = testWidth < minDim ? minDim : testWidth
+      const testHeight = (Math.floor(window.innerHeight / gridSize) * gridSize) - gridSize
+      const height = testHeight < minDim ? minDim : testHeight
+      const bounds = { width, height }
       setBounds(bounds)
       const wallX = findRatioLocation(width, wall.ratio, gridSize)
       const wallY = findRatioLocation(height,wall.ratio, gridSize)
