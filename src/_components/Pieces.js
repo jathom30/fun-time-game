@@ -9,14 +9,10 @@ export const Item = ({position, className, emoji}) => (
   <div className={className} style={{...standardStyles, top: position.y, left: position.x}}>{emoji}</div>
 )
 
-export const Wall = ({ position, dimensions }) => {
-  return (
-    <div className="Wall" style={{ ...standardStyles, top: position.y, left: position.x, height: dimensions.height, width: dimensions.width }} />
-  )
-}
+export const Wall = ({ position, dimensions }) => (
+  <div className="Wall" style={{ ...standardStyles, top: position.y, left: position.x, height: dimensions.height, width: dimensions.width }} />
+)
 
-export const WallHole = ({ position }) => {
-  return (
-    <div className="WallHole" style={{...standardStyles, top: position.y, left: position.x}} />
-  )
-}
+export const WallHole = ({ position }) =>  (
+  <div className="WallHole" style={{...standardStyles, top: position.y, left: position.x}} />
+)

@@ -4,8 +4,7 @@ import './App.css';
 import { PositionContext, PositionContextProvider } from './PositionContext';
 
 const Board = () => {
-  const { 
-    setReset,
+  const {
     win, 
     lose,
     wall, 
