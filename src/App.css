@@ -1,5 +1,6 @@
 :root {
   --height: 10px;
+  --darkTint: rgba(0,0,0,.1);
 }
 
 .App {
@@ -12,6 +13,13 @@
   position: relative;
   background: rgb(31, 26, 46);
   overflow: hidden;
+  background-image:
+  linear-gradient(45deg, var(--darkTint) 25%, transparent 25%), 
+  linear-gradient(-45deg, var(--darkTint) 25%, transparent 25%),
+  linear-gradient(45deg, transparent 75%, var(--darkTint) 75%),
+  linear-gradient(-45deg, transparent 75%, var(--darkTint) 75%);
+  background-size: calc(var(--height)*4) calc(var(--height)*4);
+  background-position:0px 0px, 0px calc(var(--height)*2), calc(var(--height)*2) calc(var(--height)* -2), calc(var(--height) * -2) 0px;
 }
 
 .Wall {
@@ -55,7 +63,6 @@
   line-height: var(--height);
 }
 
-
 .WallHole {
   background: rgb(31, 26, 46);
   position: absolute;
@@ -76,7 +83,6 @@
   background: rgb(5, 46, 179);
 }
 
-
 .Winner, .Loser {
   background: white;
   border-radius: 5px;
@@ -89,7 +95,7 @@
   color: rgb(55, 17, 116);
 }
 
-.Winner h1 {
+.Winner h1, .Loser h1 {
   font-weight: bold;
   font-size: 50px;
 }
