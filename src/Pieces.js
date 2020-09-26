@@ -5,17 +5,9 @@ const standardStyles = {
   height: gridSize, width: gridSize, fontSize: gridSize, lineHeight: gridSize,
 }
 
-export const HeroItem = ({ position }) => {
-  return (
-    <div className="HeroItem" style={{ ...standardStyles, top: position.y, left: position.x}}>🔑</div>
-  )
-}
-
-export const OppositeItem = ({ position }) => {
-  return (
-    <div className="HeroItem opposite--HeroItem" style={{ ...standardStyles, top: position.y, left: position.x}}>🔑</div>
-  )
-}
+export const Item = ({position, className, emoji}) => (
+  <div className={className} style={{...standardStyles, top: position.y, left: position.x}}>{emoji}</div>
+)
 
 export const Wall = ({ position, dimensions }) => {
   return (
@@ -23,44 +15,8 @@ export const Wall = ({ position, dimensions }) => {
   )
 }
 
-export const Hero = ({ position, hasItem }) => {
-  return (
-    <div style={{...standardStyles, top: position.y, left: position.x}} className={`Hero ${hasItem ? 'has-item' : ''}`}>🕵️‍♂️</div>
-  )
-}
-
-export const Opposite = ({ position, hasItem }) => {
-  return (
-    <div style={{...standardStyles, top: position.y, left: position.x}} className={`Opposite ${hasItem ? 'has-item' : ''}`}>🕵️‍♀️</div>
-  )
-}
-
 export const WallHole = ({ position }) => {
   return (
     <div className="WallHole" style={{...standardStyles, top: position.y, left: position.x}} />
-  )
-}
-
-export const Goal = ({position}) => {
-  return (
-    <div className="Goal" style={{...standardStyles, top: position.y, left: position.x}}>🏠</div>
-  )
-}
-
-export const OppositeGoal = ({position}) => {
-  return (
-    <div className="Goal opposite--Goal" style={{...standardStyles, top: position.y, left: position.x}}>🏠</div>
-  )
-}
-
-export const HeroHazard = ({ position }) => {
-  return (
-    <div className="HeroHazard" style={{...standardStyles, top: position.y, left: position.x}}>🚔</div>
-  )
-}
-
-export const OppositeHazard = ({ position }) => {
-  return (
-    <div className="HeroHazard opposite--HeroHazard" style={{...standardStyles, top: position.y, left: position.x}}>🚔</div>
   )
 }
