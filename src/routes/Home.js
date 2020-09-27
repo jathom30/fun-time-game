@@ -1,9 +1,8 @@
 import React from 'react'
-import { Link, useHistory } from 'react-router-dom'
+import { Link } from 'react-router-dom'
 import './home.scss'
 
 export const Home = () => {
-  const history = useHistory()
   return (
     <div className="Home">
       <div className="heroImg-Home">future image</div>

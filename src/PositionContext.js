@@ -98,8 +98,11 @@ export const PositionContextProvider = ({ children }) => {
     }
   }
 
-  const checkSpace = (item, dontBeHeres) => 
-    dontBeHeres.some(location => location.x === item.x && location.y === item.y)
+  const checkSpace = (dontBeHeres, createItem) => {
+    const item = createItem()
+    const sameSpace = dontBeHeres.some(location => location.position.x === item.x && location.position.y === item.y)
+    return sameSpace ? checkSpace(dontBeHeres, createItem) : item
+  }
 
   const applyCharacter = (heroSide, wall) => {
     const position = generateSpace(heroSide, wall)
@@ -112,11 +115,10 @@ export const PositionContextProvider = ({ children }) => {
 
   const applyItem = (heroSide, wall, spaceChecks) => {
     const position = () => generateSpace(heroSide, wall)
-    const ogPosition = position()
-    const finalPosition = checkSpace(position(), spaceChecks) ? position() : ogPosition
+    const checkedPosition = checkSpace(spaceChecks, position)
     return {
-      position: finalPosition,
-      ratio: ratioXY(finalPosition, bounds),
+      position: checkedPosition,
+      ratio: ratioXY(checkedPosition, bounds),
     }
   }
 
@@ -139,8 +141,7 @@ export const PositionContextProvider = ({ children }) => {
       setHeroGoal(heroGoal)
       const oppositeGoal = applyItem(true, wall, [hero, heroItem])
       setOppositeGoal(oppositeGoal)
-      console.log(wallHole.position, wall.horizontal)
-      const wallHoleSurrounds = wall.horizontal ? [{x: wallHole.position.x, y: wallHole.position.y - gridSize}, {x: wallHole.position.x, y: wallHole.position.y + gridSize}] : [{x: wallHole.position.x - gridSize, y: wallHole.position.y},{x: wallHole.position.x + gridSize, y: wallHole.position.y}]
+      const wallHoleSurrounds = wall.horizontal ? [{position: {x: wallHole.position.x, y: wallHole.position.y - gridSize}}, {position: {x: wallHole.position.x, y: wallHole.position.y + gridSize}}] : [{position: {x: wallHole.position.x - gridSize, y: wallHole.position.y}},{position: {x: wallHole.position.x + gridSize, y: wallHole.position.y}}]
       const heroHazard = applyItem(true, wall, [hero, heroItem, oppositeGoal, ...wallHoleSurrounds])
       setHeroHazard(heroHazard)
       const oppositeHazard = applyItem(false, wall, [opposite, oppositeItem, heroGoal, ...wallHoleSurrounds])
