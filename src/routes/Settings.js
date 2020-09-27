@@ -23,8 +23,8 @@ export const Settings = () => {
     <div className="Settings">
       <div className="topBar-Settings">
         <Link className="backBtn-topBar" to="/">Back to home</Link>
-        <Link className="backBtn-topBar" to="/board">Play</Link>
-        <Link className="backBtn-topBar" to="/how-to">How to</Link>
+        {/* <Link className="backBtn-topBar" to="/board">Play</Link>
+        <Link className="backBtn-topBar" to="/how-to">How to</Link> */}
       </div>
       <div className="wrapper-Settings">
         <div className="rule-wrapper">

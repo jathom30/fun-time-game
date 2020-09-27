@@ -7,8 +7,8 @@ export const HowTo = () => {
     <div className="HowTo">
       <div className="topBar-HowTo">
         <Link className="backBtn-topBar" to="/">Back to home</Link>
-        <Link className="backBtn-topBar" to="/board">Play</Link>
-        <Link className="backBtn-topBar" to="/settings">Settings</Link>
+        {/* <Link className="backBtn-topBar" to="/board">Play</Link>
+        <Link className="backBtn-topBar" to="/settings">Settings</Link> */}
       </div>
       <div className="wrapper-HowTo">
         <div className="tldr-wrapper">
