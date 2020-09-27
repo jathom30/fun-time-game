@@ -36,6 +36,7 @@ export const PositionContextProvider = ({ children }) => {
     position: {x:0,y:0},
     ratio: {},
     hasItem: false,
+    emoji: '🕵️‍♂️',
   })
   const [heroItem, setHeroItem] = useState({
     position: {x:1,y:1},
@@ -54,6 +55,7 @@ export const PositionContextProvider = ({ children }) => {
     position: {x:0,y:0},
     ratio: {},
     hasItem: false,
+    emoji: '🕵️‍♀️',
   })
   const [oppositeItem, setOppositeItem] = useState({
     position: {x:1,y:1},
@@ -133,10 +135,10 @@ export const PositionContextProvider = ({ children }) => {
       setWall(wall)
       const wallHole = applyWallHole(wall, gridSize, gridWidthCount, gridHeightCount, bounds)
       setWallHole(wallHole)
-      const hero = applyCharacter(true, wall)
-      setHero(hero)
-      const opposite = applyCharacter(false, wall)
-      setOpposite(opposite)
+      const appliedHero = applyCharacter(true, wall)
+      setHero({...hero, ...appliedHero})
+      const appliedOpposite = applyCharacter(false, wall)
+      setOpposite({...opposite, ...appliedOpposite})
       const heroItem = applyItem(true, wall, [hero])
       const oppositeItem = applyItem(false, wall, [opposite])
       if (settings.hasItem) {
@@ -437,11 +439,13 @@ export const PositionContextProvider = ({ children }) => {
         wallHole,
 
         hero,
+        setHero,
         heroItem,
         heroGoal,
         heroHazard,
 
         opposite,
+        setOpposite,
         oppositeItem,
         oppositeGoal,
         oppositeHazard,

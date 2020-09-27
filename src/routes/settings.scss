@@ -19,12 +19,24 @@
     margin: 5rem auto 0;
     display: grid;
     gap: 1rem;
-    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
     .rule-wrapper {
       padding: 1rem;
       background: white;
       border-radius: .25rem;
-      
+      p {
+        font-weight: bold;
+      }
+      .rules-rule {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+        gap: .5rem;
+      }
+      .emojiForm-rule {
+        font-size: 3rem;
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(75px, 1fr));
+      }
     }
   }
 }
