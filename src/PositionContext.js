@@ -16,6 +16,10 @@ document.documentElement.style.setProperty('--height', gridSize/2+'px')
 export const PositionContext = React.createContext({})
 export const PositionContextProvider = ({ children }) => {
   const [reset, setReset] = useState(true)
+  const [settings, setSettings] = useState({
+    hasItem: true,
+    hasHazard: true,
+  })
   const [win, setWin] = useState(false)
   const [lose, setLose] = useState(false)
     const [wall, setWall] = useState({
@@ -131,21 +135,25 @@ export const PositionContextProvider = ({ children }) => {
       setWallHole(wallHole)
       const hero = applyCharacter(true, wall)
       setHero(hero)
-      const heroItem = applyItem(true, wall, [hero])
-      setHeroItem(heroItem)
       const opposite = applyCharacter(false, wall)
       setOpposite(opposite)
+      const heroItem = applyItem(true, wall, [hero])
       const oppositeItem = applyItem(false, wall, [opposite])
-      setOppositeItem(oppositeItem)
+      if (settings.hasItem) {
+        setHeroItem(heroItem)
+        setOppositeItem(oppositeItem)
+      }
       const heroGoal = applyItem(false, wall, [opposite, oppositeItem])
       setHeroGoal(heroGoal)
       const oppositeGoal = applyItem(true, wall, [hero, heroItem])
       setOppositeGoal(oppositeGoal)
-      const wallHoleSurrounds = wall.horizontal ? [{position: {x: wallHole.position.x, y: wallHole.position.y - gridSize}}, {position: {x: wallHole.position.x, y: wallHole.position.y + gridSize}}] : [{position: {x: wallHole.position.x - gridSize, y: wallHole.position.y}},{position: {x: wallHole.position.x + gridSize, y: wallHole.position.y}}]
-      const heroHazard = applyItem(true, wall, [hero, heroItem, oppositeGoal, ...wallHoleSurrounds])
-      setHeroHazard(heroHazard)
-      const oppositeHazard = applyItem(false, wall, [opposite, oppositeItem, heroGoal, ...wallHoleSurrounds])
-      setOppositeHazard(oppositeHazard)
+      if (settings.hasHazard) {
+        const wallHoleSurrounds = wall.horizontal ? [{position: {x: wallHole.position.x, y: wallHole.position.y - gridSize}}, {position: {x: wallHole.position.x, y: wallHole.position.y + gridSize}}] : [{position: {x: wallHole.position.x - gridSize, y: wallHole.position.y}},{position: {x: wallHole.position.x + gridSize, y: wallHole.position.y}}]
+        const heroHazard = applyItem(true, wall, [hero, heroItem, oppositeGoal, ...wallHoleSurrounds])
+        setHeroHazard(heroHazard)
+        const oppositeHazard = applyItem(false, wall, [opposite, oppositeItem, heroGoal, ...wallHoleSurrounds])
+        setOppositeHazard(oppositeHazard)
+      }
       setReset(false)
       setWin(false)
       setLose(false)
@@ -190,13 +198,17 @@ export const PositionContextProvider = ({ children }) => {
         }
       }))
       setHero(prev => setLocationOnRatio(prev, width, height, gridSize, wall, true))
-      setHeroItem(prev => setLocationOnRatio(prev, width, height, gridSize, wall, true))
       setHeroGoal(prev => setLocationOnRatio(prev, width, height, gridSize, wall, false))
+      if (settings.hasItem) {
+        setHeroItem(prev => setLocationOnRatio(prev, width, height, gridSize, wall, true))
+        setOppositeItem(prev => setLocationOnRatio(prev, width, height, gridSize, wall, false))
+      }
       setOpposite(prev => setLocationOnRatio(prev, width, height, gridSize, wall, false))
-      setOppositeItem(prev => setLocationOnRatio(prev, width, height, gridSize, wall, false))
       setOppositeGoal(prev => setLocationOnRatio(prev, width, height, gridSize, wall, true))
-      setHeroHazard(prev => setLocationOnRatio(prev, width, height, gridSize, wall, true))
-      setOppositeHazard(prev => setLocationOnRatio(prev, width, height, gridSize, wall, false))
+      if (settings.hasHazard) {
+        setHeroHazard(prev => setLocationOnRatio(prev, width, height, gridSize, wall, true))
+        setOppositeHazard(prev => setLocationOnRatio(prev, width, height, gridSize, wall, false))
+      }
     }
 
     window.addEventListener('resize', resize)
@@ -389,12 +401,21 @@ export const PositionContextProvider = ({ children }) => {
   // handle win and lose conditions
   useEffect(() => {
     if (sameSpaceCheck(hero,heroGoal) && sameSpaceCheck(opposite, oppositeGoal)) {
-      setCanMove(false)
-      setTimeout(() => {
-        setWin(true)
-      }, 200)
+      if (settings.hasItem) {
+        if (hero.hasItem) {
+          setCanMove(false)
+          setTimeout(() => {
+            setWin(true)
+          }, 200)
+        }
+      } else {
+        setCanMove(false)
+        setTimeout(() => {
+          setWin(true)
+        }, 200)
+      }
     }
-    if (sameSpaceCheck(hero, heroHazard) || sameSpaceCheck(hero, oppositeHazard) || sameSpaceCheck(opposite, heroHazard) || sameSpaceCheck(opposite, oppositeHazard)) {
+    if (settings.hasHazard && (sameSpaceCheck(hero, heroHazard) || sameSpaceCheck(hero, oppositeHazard) || sameSpaceCheck(opposite, heroHazard) || sameSpaceCheck(opposite, oppositeHazard))) {
       setCanMove(false)
       setTimeout(() => {
         setLose(true)
@@ -409,6 +430,8 @@ export const PositionContextProvider = ({ children }) => {
         lose,
         reset,
         setReset,
+        settings,
+        setSettings,
 
         wall,
         wallHole,

@@ -2,7 +2,7 @@ import React from 'react';
 import './App.scss';
 import { BrowserRouter as Router, Route } from 'react-router-dom'
 import { PositionContextProvider } from './PositionContext';
-import { BoardRoute, HowTo, Home } from './routes'
+import { BoardRoute, HowTo, Home, Settings } from './routes'
 
 const App = () => {
   return (
@@ -17,6 +17,9 @@ const App = () => {
           </Route>
           <Route path="/how-to">
             <HowTo />
+          </Route>
+          <Route path="/settings">
+            <Settings />
           </Route>
         </Router>
       </PositionContextProvider>

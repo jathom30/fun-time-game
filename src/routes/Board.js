@@ -8,6 +8,7 @@ export const Board = () => {
   const {
     win, 
     lose,
+    settings,
     wall, 
     bounds, 
     wallHole, 
@@ -32,13 +33,17 @@ export const Board = () => {
         <Wall position={wall.position} dimensions={wall.dimensions} />
         <WallHole position={wallHole.position} />
         <Item position={hero.position} className={`Hero ${hero.hasItem ? 'has-item' : ''}`} emoji="🕵️‍♂️" />
-        {!hero.hasItem && <Item position={heroItem.position} className="HeroItem" emoji="🔑" />}
+        {settings.hasItem && !hero.hasItem && <Item position={heroItem.position} className="HeroItem" emoji="🔑" />}
         <Item position={opposite.position} className={`Opposite ${opposite.hasItem ? 'has-item' : ''}`} emoji="🕵️‍♀️" />
-        {!opposite.hasItem && <Item position={oppositeItem.position} className="HeroItem opposite--HeroItem" emoji="🔑" />}
+        {settings.hasItem && !opposite.hasItem && <Item position={oppositeItem.position} className="HeroItem opposite--HeroItem" emoji="🔑" />}
         <Item position={heroGoal.position} className="HeroGoal" emoji="🏠" />
         <Item position={oppositeGoal.position} className="HeroGoal opposite--HeroGoal" emoji="🏠" />
-        <Item position={heroHazard.position} className="HeroHazard" emoji="🚔" />
-        <Item position={oppositeHazard.position} className="HeroHazard opposite--HeroHazard" emoji="🚔" />
+        {settings.hasHazard && (
+          <>
+            <Item position={heroHazard.position} className="HeroHazard" emoji="🚔" />
+            <Item position={oppositeHazard.position} className="HeroHazard opposite--HeroHazard" emoji="🚔" />
+          </>
+        )}
       </div>
     )
   )
@@ -52,7 +57,6 @@ export const BoardRoute = () => {
       <div className="topBar-BoardRoute">
         <Link className="backBtn-topBar" to="/">Back to home</Link>
         <button onClick={() => setReset(true)}>Reset game</button>
-        <Link className="backBtn-topBar" to="/how-to">How to</Link>
       </div>
       <Board />
     </div>

@@ -10,6 +10,7 @@ export const Home = () => {
       <div className="routes-Home">
         <Link className="btn-routes" to="/board">Play</Link>
         <Link className="btn-routes" to="/how-to">How to</Link>
+        <Link className="btn-routes" to="/settings">Settings</Link>
       </div>
     </div>
   )

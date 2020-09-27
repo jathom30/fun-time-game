@@ -1,0 +1,30 @@
+.Settings {
+  .topBar-Settings {
+    height: calc(var(--height) * 2);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin: 0 1rem;
+    .backBtn-topBar {
+      color: white;
+      text-decoration: none;
+      padding: 1rem;
+      font-weight: bold;
+      cursor: pointer;
+    }
+  }
+  .wrapper-Settings {
+    max-width: 75vw;
+    min-width: 300px;
+    margin: 5rem auto 0;
+    display: grid;
+    gap: 1rem;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    .rule-wrapper {
+      padding: 1rem;
+      background: white;
+      border-radius: .25rem;
+      
+    }
+  }
+}
