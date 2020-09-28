@@ -8,13 +8,14 @@ const emojiChoices = [
 ]
 
 export const Settings = () => {
-  const { settings, setSettings, hero, setHero, opposite, setOpposite, heroHazard, setHeroHazard, oppositeHazard, setOppositeHazard } = useContext(PositionContext)
+  const { settings, setSettings, hero, setHero, opposite, setOpposite, heroHazard, setHeroHazard, oppositeHazard, setOppositeHazard, setReset, } = useContext(PositionContext)
 
   const handleSettings = (e, setting) => {
     setSettings({
       ...settings,
       [setting]: e.target.checked,
     })
+    setReset(true)
   }
 
   return (
@@ -35,6 +36,10 @@ export const Settings = () => {
               <label htmlFor="items">
                 Keys?
                 <input checked={settings.hasItem} onChange={e => handleSettings(e,'hasItem')} type="checkbox" />
+              </label>
+              <label htmlFor="items">
+                Sparks?
+                <input checked={settings.hasSpark} onChange={e => handleSettings(e,'hasSpark')} type="checkbox" />
               </label>
             </div>
           </div>

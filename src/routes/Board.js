@@ -41,8 +41,12 @@ export const Board = () => {
           <Piece position={oppositeHazard.position} className="HeroHazard" emoji={oppositeHazard.emoji} />
         </>
       )}
-      <Piece position={heroSpark.position} className={`HeroSpark ${heroSpark.active ? 'is-active' : ''}`} emoji={heroSpark.emoji} />
-      <Piece position={oppositeSpark.position} className={`HeroSpark ${oppositeSpark.active ? 'is-active' : ''}`} emoji={oppositeSpark.emoji} />
+      {settings.hasSpark && (
+        <>
+          <Piece position={heroSpark.position} className={`HeroSpark ${heroSpark.active ? 'is-active' : ''}`} emoji={heroSpark.emoji} />
+          <Piece position={oppositeSpark.position} className={`HeroSpark ${oppositeSpark.active ? 'is-active' : ''}`} emoji={oppositeSpark.emoji} />
+        </>
+      )}
 
       {win && <WinLose header="Amazing!" byline="You've Won!" />}
       {lose && <WinLose header="Well, dern." byline="You've lost..." />}

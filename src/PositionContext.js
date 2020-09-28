@@ -19,6 +19,7 @@ export const PositionContextProvider = ({ children }) => {
   const [settings, setSettings] = useState({
     hasItem: true,
     hasHazard: true,
+    hasSpark: false,
   })
   const [win, setWin] = useState(false)
   const [lose, setLose] = useState(false)
@@ -171,10 +172,12 @@ export const PositionContextProvider = ({ children }) => {
         setOppositeHazard({...oppositeHazard, ...appliedOppositeHazard})
       }
 
-      const appliedHeroSpark = applyItem(true, wall, [hero, heroItem, oppositeGoal, ...wallHoleSurrounds])
-      setHeroSpark({...heroSpark, ...appliedHeroSpark})
-      const appliedOppositeSpark = applyItem(false, wall, [hero, heroItem, oppositeGoal, ...wallHoleSurrounds])
-      setOppositeSpark({...oppositeSpark, ...appliedOppositeSpark})
+      if (settings.hasSpark) {
+        const appliedHeroSpark = applyItem(true, wall, [hero, heroItem, oppositeGoal, ...wallHoleSurrounds])
+        setHeroSpark({...heroSpark, ...appliedHeroSpark})
+        const appliedOppositeSpark = applyItem(false, wall, [hero, heroItem, oppositeGoal, ...wallHoleSurrounds])
+        setOppositeSpark({...oppositeSpark, ...appliedOppositeSpark})
+      }
 
       setReset(false)
       setWin(false)
@@ -231,8 +234,10 @@ export const PositionContextProvider = ({ children }) => {
         setHeroHazard(prev => setLocationOnRatio(prev, width, height, gridSize, wall, true))
         setOppositeHazard(prev => setLocationOnRatio(prev, width, height, gridSize, wall, false))
       }
-      setHeroSpark(prev => setLocationOnRatio(prev, width, height, gridSize, wall, true))
-      setOppositeSpark(prev => setLocationOnRatio(prev, width, height, gridSize, wall, true))
+      if (settings.hasSpark) {
+        setHeroSpark(prev => setLocationOnRatio(prev, width, height, gridSize, wall, true))
+        setOppositeSpark(prev => setLocationOnRatio(prev, width, height, gridSize, wall, true))
+      }
     }
 
     window.addEventListener('resize', resize)
@@ -424,27 +429,29 @@ export const PositionContextProvider = ({ children }) => {
 
   // Sparks fly for one sec every five sec
   useEffect(() => {
-    setInterval(() => {
-      setHeroSpark(prev => ({
-        ...prev,
-        active: true,
-      }))
-      setOppositeSpark(prev => ({
-        ...prev,
-        active: true,
-      }))
-      setTimeout(() => {
+    if (settings.hasSpark) {
+      setInterval(() => {
         setHeroSpark(prev => ({
           ...prev,
-          active: false,
+          active: true,
         }))
         setOppositeSpark(prev => ({
           ...prev,
-          active: false,
+          active: true,
         }))
-    },1000)
-    },5000)
-  },[])
+        setTimeout(() => {
+          setHeroSpark(prev => ({
+            ...prev,
+            active: false,
+          }))
+          setOppositeSpark(prev => ({
+            ...prev,
+            active: false,
+          }))
+      },1000)
+      },5000)
+    }
+  },[settings.hasSpark])
   
   // handle win and lose conditions
   useEffect(() => {
@@ -477,7 +484,7 @@ export const PositionContextProvider = ({ children }) => {
     if (settings.hasHazard && (sameSpaceCheck(hero, heroHazard) || sameSpaceCheck(hero, oppositeHazard) || sameSpaceCheck(opposite, heroHazard) || sameSpaceCheck(opposite, oppositeHazard))) {
       handleLose()
     }
-    if (heroSpark.active && (sameSpaceCheck(hero, heroSpark) || sameSpaceCheck(opposite, heroSpark)) || oppositeSpark.active && (sameSpaceCheck(hero, oppositeSpark) || sameSpaceCheck(opposite, oppositeSpark))) {
+    if (settings.hasSpark && (heroSpark.active && (sameSpaceCheck(hero, heroSpark) || sameSpaceCheck(opposite, heroSpark)) || oppositeSpark.active && (sameSpaceCheck(hero, oppositeSpark) || sameSpaceCheck(opposite, oppositeSpark)))) {
       handleLose()
     }
   },[hero.position, opposite.position, heroSpark.active])
@@ -502,6 +509,7 @@ export const PositionContextProvider = ({ children }) => {
         heroHazard,
         setHeroHazard,
         heroSpark,
+        setHeroSpark,
 
         opposite,
         setOpposite,
@@ -510,6 +518,7 @@ export const PositionContextProvider = ({ children }) => {
         oppositeHazard,
         setOppositeHazard,
         oppositeSpark,
+        setOppositeSpark,
 
         canMove,
         bounds
