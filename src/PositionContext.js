@@ -49,6 +49,7 @@ export const PositionContextProvider = ({ children }) => {
   const [heroHazard, setHeroHazard] = useState({
     position: {x:-1,y:-1},
     ratio: {},
+    emoji: '🧟‍♂️',
   })
 
   const [opposite, setOpposite] = useState({
@@ -68,6 +69,7 @@ export const PositionContextProvider = ({ children }) => {
   const [oppositeHazard, setOppositeHazard] = useState({
     position: {x:-1,y:-1},
     ratio: {},
+    emoji: '🧟‍♀️',
   })
 
   // movement related state
@@ -151,10 +153,10 @@ export const PositionContextProvider = ({ children }) => {
       setOppositeGoal(oppositeGoal)
       if (settings.hasHazard) {
         const wallHoleSurrounds = wall.horizontal ? [{position: {x: wallHole.position.x, y: wallHole.position.y - gridSize}}, {position: {x: wallHole.position.x, y: wallHole.position.y + gridSize}}] : [{position: {x: wallHole.position.x - gridSize, y: wallHole.position.y}},{position: {x: wallHole.position.x + gridSize, y: wallHole.position.y}}]
-        const heroHazard = applyItem(true, wall, [hero, heroItem, oppositeGoal, ...wallHoleSurrounds])
-        setHeroHazard(heroHazard)
-        const oppositeHazard = applyItem(false, wall, [opposite, oppositeItem, heroGoal, ...wallHoleSurrounds])
-        setOppositeHazard(oppositeHazard)
+        const appliedHeroHazard = applyItem(true, wall, [hero, heroItem, oppositeGoal, ...wallHoleSurrounds])
+        setHeroHazard({...heroHazard, ...appliedHeroHazard})
+        const appliedOppositeHazard = applyItem(false, wall, [opposite, oppositeItem, heroGoal, ...wallHoleSurrounds])
+        setOppositeHazard({...oppositeHazard, ...appliedOppositeHazard})
       }
       setReset(false)
       setWin(false)
@@ -443,12 +445,14 @@ export const PositionContextProvider = ({ children }) => {
         heroItem,
         heroGoal,
         heroHazard,
+        setHeroHazard,
 
         opposite,
         setOpposite,
         oppositeItem,
         oppositeGoal,
         oppositeHazard,
+        setOppositeHazard,
 
         canMove,
         bounds

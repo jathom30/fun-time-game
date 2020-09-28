@@ -4,6 +4,7 @@
   --height: 10px;
   --darkTint: rgba(0,0,0,.1);
   --color: rgb(55, 17, 116);
+  --background: rgb(23, 3, 56);
 }
 
 body, *, *:before, * :after {
@@ -17,6 +18,7 @@ p, h1, h2, h3, h4, h5 {
 
 html, body {
   min-height: 100vh;
+  background: var(--background);
 }
 .App {
   min-height: 100vh;

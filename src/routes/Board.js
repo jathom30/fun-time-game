@@ -40,8 +40,8 @@ export const Board = () => {
         <Item position={oppositeGoal.position} className="HeroGoal opposite--HeroGoal" emoji="🏠" />
         {settings.hasHazard && (
           <>
-            <Item position={heroHazard.position} className="HeroHazard" emoji="🚔" />
-            <Item position={oppositeHazard.position} className="HeroHazard opposite--HeroHazard" emoji="🚔" />
+            <Item position={heroHazard.position} className="HeroHazard" emoji={heroHazard.emoji} />
+            <Item position={oppositeHazard.position} className="HeroHazard" emoji={oppositeHazard.emoji} />
           </>
         )}
       </div>
