@@ -93,30 +93,40 @@
   color: rgb(55, 17, 116);
   opacity: 0;
   transition: all .2s ease;
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%,-50%);
+  z-index: 10;
   h1 {
     font-weight: bold;
     font-size: 50px;
     margin: 2rem;
   }
-}
-
-.repeatBtn {
-  border: none;
-  padding: 20px 40px;
-  border-radius: 5px;
-  color: white;
-  font-weight: bold;
-  background: rgb(55, 17, 116);
-  cursor: pointer;
-  margin-top: 1rem;
-  width: 100%;
-  &:hover {
-    background: rgb(30, 5, 70);
+  &.blow-up {
+    opacity: 1;
+  }
+  .repeatBtn {
+    border: none;
+    padding: 20px 40px;
+    border-radius: 5px;
+    color: white;
+    font-weight: bold;
+    background: rgb(55, 17, 116);
+    cursor: pointer;
+    margin-top: 1rem;
+    width: 100%;
+    &:hover {
+      background: rgb(30, 5, 70);
+    }
   }
 }
 
-.blow-up {
-  opacity: 1;
+.overLay {
+  position: fixed;
+  z-index: 9;
+  top: 0;bottom: 0;left: 0;right: 0;
+  background: rgba(black,.5);
 }
 
 .BoardRoute {

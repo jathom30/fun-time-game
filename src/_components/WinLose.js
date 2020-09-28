@@ -12,10 +12,13 @@ export const WinLose = ({header, byline}) => {
   },[])
 
   return (
-    <div className={`WinLose ${action ? 'blow-up' : ''}`}>
-      <h1>{header}</h1>
-      <p>{byline}</p>
-      <button className="repeatBtn" onClick={() => setReset(true)}>Play again</button>
-    </div>
+    <>
+      <div className={`WinLose ${action ? 'blow-up' : ''}`}>
+        <h1>{header}</h1>
+        <p>{byline}</p>
+        <button className="repeatBtn" onClick={() => setReset(true)}>Play again</button>
+      </div>
+      <div className="overLay"></div>
+    </>
   )
 }

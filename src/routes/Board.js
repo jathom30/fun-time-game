@@ -24,28 +24,24 @@ export const Board = () => {
   
 
   return (
-    win ? (
-    <WinLose header="Amazing!" byline="You've Won!" />
-    ) : lose ? (
-    <WinLose header="Well, dern." byline="You've lost..." />
-      ) : (
-      <div className="Board" style={{height: bounds.height, width: bounds.width}}>
-        <Wall position={wall.position} dimensions={wall.dimensions} />
-        <WallHole position={wallHole.position} />
-        <Item position={hero.position} className={`Hero ${hero.hasItem ? 'has-item' : ''}`} emoji={hero.emoji} />
-        {settings.hasItem && !hero.hasItem && <Item position={heroItem.position} className="HeroItem" emoji="🔑" />}
-        <Item position={opposite.position} className={`Opposite ${opposite.hasItem ? 'has-item' : ''}`} emoji={opposite.emoji} />
-        {settings.hasItem && !opposite.hasItem && <Item position={oppositeItem.position} className="HeroItem opposite--HeroItem" emoji="🔑" />}
-        <Item position={heroGoal.position} className="HeroGoal" emoji="🏠" />
-        <Item position={oppositeGoal.position} className="HeroGoal opposite--HeroGoal" emoji="🏠" />
-        {settings.hasHazard && (
-          <>
-            <Item position={heroHazard.position} className="HeroHazard" emoji={heroHazard.emoji} />
-            <Item position={oppositeHazard.position} className="HeroHazard" emoji={oppositeHazard.emoji} />
-          </>
-        )}
-      </div>
-    )
+    <div className="Board" style={{height: bounds.height, width: bounds.width}}>
+      <Wall position={wall.position} dimensions={wall.dimensions} />
+      <WallHole position={wallHole.position} />
+      <Item position={hero.position} className={`Hero ${hero.hasItem ? 'has-item' : ''}`} emoji={hero.emoji} />
+      {settings.hasItem && !hero.hasItem && <Item position={heroItem.position} className="HeroItem" emoji="🔑" />}
+      <Item position={opposite.position} className={`Opposite ${opposite.hasItem ? 'has-item' : ''}`} emoji={opposite.emoji} />
+      {settings.hasItem && !opposite.hasItem && <Item position={oppositeItem.position} className="HeroItem opposite--HeroItem" emoji="🔑" />}
+      <Item position={heroGoal.position} className="HeroGoal" emoji="🏠" />
+      <Item position={oppositeGoal.position} className="HeroGoal opposite--HeroGoal" emoji="🏠" />
+      {settings.hasHazard && (
+        <>
+          <Item position={heroHazard.position} className="HeroHazard" emoji={heroHazard.emoji} />
+          <Item position={oppositeHazard.position} className="HeroHazard" emoji={oppositeHazard.emoji} />
+        </>
+      )}
+      {win && <WinLose header="Amazing!" byline="You've Won!" />}
+      {lose && <WinLose header="Well, dern." byline="You've lost..." />}
+    </div>
   )
 }
 
