@@ -5,8 +5,8 @@ const standardStyles = {
   height: gridSize, width: gridSize, fontSize: gridSize, lineHeight: gridSize,
 }
 
-export const Item = ({position, className, emoji}) => (
-  <div className={className} style={{...standardStyles, top: position.y, left: position.x}}>{emoji}</div>
+export const Piece = ({position, className, emoji}) => (
+  <div className={`Piece ${className}`} style={{...standardStyles, top: position.y, left: position.x}}>{emoji}</div>
 )
 
 export const Wall = ({ position, dimensions }) => (

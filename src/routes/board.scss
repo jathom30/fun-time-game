@@ -27,12 +27,13 @@
   }
   
   
-  .HeroItem, .Hero, .Opposite, .HeroHazard, .HeroHazard.opposite--HeroHazard, .HeroGoal, .HeroGoal.opposite--HeroGoal {
+  .Piece {
     border-radius: 50%;
     position: absolute;
     display: flex;
     align-items: center;
     justify-content: center;
+    background: white;
   }
   
   .Hero, .Opposite {
@@ -75,8 +76,15 @@
   }
   
   
-  .HeroHazard {
+  .HeroHazard, .HeroSpark {
     background: rgb(179, 5, 5);
+  }
+
+  .HeroSpark {
+    opacity: .25;
+    &.is-active {
+      opacity: 1;
+    }
   }
   
 }

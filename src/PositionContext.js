@@ -71,6 +71,18 @@ export const PositionContextProvider = ({ children }) => {
     ratio: {},
     emoji: '🧟‍♀️',
   })
+  const [heroSpark, setHeroSpark] = useState({
+    position: {},
+    ratio: {},
+    emoji: '⚡️',
+    active: false,
+  })
+  const [oppositeSpark, setOppositeSpark] = useState({
+    position: {},
+    ratio: {},
+    emoji: '⚡️',
+    active: false,
+  })
 
   // movement related state
   const [canMove, setCanMove] = useState(true)
@@ -151,13 +163,19 @@ export const PositionContextProvider = ({ children }) => {
       setHeroGoal(heroGoal)
       const oppositeGoal = applyItem(true, wall, [hero, heroItem])
       setOppositeGoal(oppositeGoal)
+      const wallHoleSurrounds = wall.horizontal ? [{position: {x: wallHole.position.x, y: wallHole.position.y - gridSize}}, {position: {x: wallHole.position.x, y: wallHole.position.y + gridSize}}] : [{position: {x: wallHole.position.x - gridSize, y: wallHole.position.y}},{position: {x: wallHole.position.x + gridSize, y: wallHole.position.y}}]
       if (settings.hasHazard) {
-        const wallHoleSurrounds = wall.horizontal ? [{position: {x: wallHole.position.x, y: wallHole.position.y - gridSize}}, {position: {x: wallHole.position.x, y: wallHole.position.y + gridSize}}] : [{position: {x: wallHole.position.x - gridSize, y: wallHole.position.y}},{position: {x: wallHole.position.x + gridSize, y: wallHole.position.y}}]
         const appliedHeroHazard = applyItem(true, wall, [hero, heroItem, oppositeGoal, ...wallHoleSurrounds])
         setHeroHazard({...heroHazard, ...appliedHeroHazard})
         const appliedOppositeHazard = applyItem(false, wall, [opposite, oppositeItem, heroGoal, ...wallHoleSurrounds])
         setOppositeHazard({...oppositeHazard, ...appliedOppositeHazard})
       }
+
+      const appliedHeroSpark = applyItem(true, wall, [hero, heroItem, oppositeGoal, ...wallHoleSurrounds])
+      setHeroSpark({...heroSpark, ...appliedHeroSpark})
+      const appliedOppositeSpark = applyItem(false, wall, [hero, heroItem, oppositeGoal, ...wallHoleSurrounds])
+      setOppositeSpark({...oppositeSpark, ...appliedOppositeSpark})
+
       setReset(false)
       setWin(false)
       setLose(false)
@@ -213,6 +231,8 @@ export const PositionContextProvider = ({ children }) => {
         setHeroHazard(prev => setLocationOnRatio(prev, width, height, gridSize, wall, true))
         setOppositeHazard(prev => setLocationOnRatio(prev, width, height, gridSize, wall, false))
       }
+      setHeroSpark(prev => setLocationOnRatio(prev, width, height, gridSize, wall, true))
+      setOppositeSpark(prev => setLocationOnRatio(prev, width, height, gridSize, wall, true))
     }
 
     window.addEventListener('resize', resize)
@@ -401,10 +421,34 @@ export const PositionContextProvider = ({ children }) => {
     if (sameSpaceCheck(hero, heroItem)) setHero(prev => ({...prev, hasItem: true}))
     if (sameSpaceCheck(opposite, oppositeItem)) setOpposite(prev => ({...prev, hasItem: true}))
   },[hero.position, opposite.position])
+
+  // Sparks fly for one sec every five sec
+  useEffect(() => {
+    setInterval(() => {
+      setHeroSpark(prev => ({
+        ...prev,
+        active: true,
+      }))
+      setOppositeSpark(prev => ({
+        ...prev,
+        active: true,
+      }))
+      setTimeout(() => {
+        setHeroSpark(prev => ({
+          ...prev,
+          active: false,
+        }))
+        setOppositeSpark(prev => ({
+          ...prev,
+          active: false,
+        }))
+    },1000)
+    },5000)
+  },[])
   
   // handle win and lose conditions
   useEffect(() => {
-    if (sameSpaceCheck(hero,heroGoal) && sameSpaceCheck(opposite, oppositeGoal)) {
+    const handleWin = () => {
       if (settings.hasItem) {
         if (hero.hasItem) {
           setCanMove(false)
@@ -419,13 +463,24 @@ export const PositionContextProvider = ({ children }) => {
         }, 200)
       }
     }
-    if (settings.hasHazard && (sameSpaceCheck(hero, heroHazard) || sameSpaceCheck(hero, oppositeHazard) || sameSpaceCheck(opposite, heroHazard) || sameSpaceCheck(opposite, oppositeHazard))) {
+
+    const handleLose = () => {
       setCanMove(false)
       setTimeout(() => {
         setLose(true)
       }, 200);
     }
-  },[hero.position, opposite.position])
+
+    if (sameSpaceCheck(hero,heroGoal) && sameSpaceCheck(opposite, oppositeGoal)) {
+      handleWin()
+    }
+    if (settings.hasHazard && (sameSpaceCheck(hero, heroHazard) || sameSpaceCheck(hero, oppositeHazard) || sameSpaceCheck(opposite, heroHazard) || sameSpaceCheck(opposite, oppositeHazard))) {
+      handleLose()
+    }
+    if (heroSpark.active && (sameSpaceCheck(hero, heroSpark) || sameSpaceCheck(opposite, heroSpark)) || oppositeSpark.active && (sameSpaceCheck(hero, oppositeSpark) || sameSpaceCheck(opposite, oppositeSpark))) {
+      handleLose()
+    }
+  },[hero.position, opposite.position, heroSpark.active])
 
   return (
     <PositionContext.Provider
@@ -446,6 +501,7 @@ export const PositionContextProvider = ({ children }) => {
         heroGoal,
         heroHazard,
         setHeroHazard,
+        heroSpark,
 
         opposite,
         setOpposite,
@@ -453,6 +509,7 @@ export const PositionContextProvider = ({ children }) => {
         oppositeGoal,
         oppositeHazard,
         setOppositeHazard,
+        oppositeSpark,
 
         canMove,
         bounds
