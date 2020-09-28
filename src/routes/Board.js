@@ -43,8 +43,8 @@ export const Board = () => {
       )}
       {settings.hasSpark && (
         <>
-          <Piece position={heroSpark.position} className={`HeroSpark ${heroSpark.active ? 'is-active' : ''}`} emoji={heroSpark.emoji} />
-          <Piece position={oppositeSpark.position} className={`HeroSpark ${oppositeSpark.active ? 'is-active' : ''}`} emoji={oppositeSpark.emoji} />
+          <Piece position={heroSpark.position} className={`HeroSpark is-${heroSpark.status}`} emoji={heroSpark.emoji} />
+          <Piece position={oppositeSpark.position} className={`HeroSpark is-${oppositeSpark.status}`} emoji={oppositeSpark.emoji} />
         </>
       )}
 

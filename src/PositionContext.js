@@ -76,13 +76,13 @@ export const PositionContextProvider = ({ children }) => {
     position: {},
     ratio: {},
     emoji: '⚡️',
-    active: false,
+    status: 'dormant',
   })
   const [oppositeSpark, setOppositeSpark] = useState({
     position: {},
     ratio: {},
     emoji: '⚡️',
-    active: false,
+    status: 'dormant',
   })
 
   // movement related state
@@ -427,28 +427,39 @@ export const PositionContextProvider = ({ children }) => {
     if (sameSpaceCheck(opposite, oppositeItem)) setOpposite(prev => ({...prev, hasItem: true}))
   },[hero.position, opposite.position])
 
-  // Sparks fly for one sec every five sec
+  // Spark actions: dormant for 5sec, then inactive for 3sec, then active for 1sec ? timing can be adjusted
+  // once dormant, sparks move position
   useEffect(() => {
     if (settings.hasSpark) {
       setInterval(() => {
         setHeroSpark(prev => ({
           ...prev,
-          active: true,
+          status: 'dormant',
         }))
         setOppositeSpark(prev => ({
           ...prev,
-          active: true,
+          status: 'dormant',
         }))
         setTimeout(() => {
           setHeroSpark(prev => ({
             ...prev,
-            active: false,
+            status: 'inactive',
           }))
           setOppositeSpark(prev => ({
             ...prev,
-            active: false,
+            status: 'inactive',
           }))
-      },1000)
+          setTimeout(() => {
+            setHeroSpark(prev => ({
+              ...prev,
+              status: 'active',
+            }))
+            setOppositeSpark(prev => ({
+              ...prev,
+              status: 'active',
+            }))
+          },1000)
+        },3000)
       },5000)
     }
   },[settings.hasSpark])
