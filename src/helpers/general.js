@@ -1,4 +1,6 @@
-export const randomOnGrid = (gridSize, max, min = 0) => (Math.floor(Math.random() * (max - min)) + min) * gridSize
+import { gridSize } from '../PositionContext'
+
+export const randomOnGrid = (max, min = 0) => (Math.floor(Math.random() * (max - min)) + min) * gridSize
 
 export const ratioXY = (position, bounds) => {
   return {
@@ -7,13 +9,13 @@ export const ratioXY = (position, bounds) => {
   }
 }
 
-export const findRatioLocation = (length, ratio, gridSize) => 
+export const findRatioLocation = (length, ratio) => 
   Math.floor(length * ratio / gridSize) * gridSize
 
-export const setLocationOnRatio = (prevItem, width, height, gridSize, wall, hero) => {
+export const setLocationOnRatio = (prevItem, width, height, wall, hero) => {
 
-  const x = findRatioLocation(width, prevItem.ratio.x, gridSize)
-  const y = findRatioLocation(height, prevItem.ratio.y, gridSize)
+  const x = findRatioLocation(width, prevItem.ratio.x)
+  const y = findRatioLocation(height, prevItem.ratio.y)
   const findCoord = (axis, variable) => {
     if (variable === wall.position[axis]) {
       if (hero) {

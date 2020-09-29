@@ -1,4 +1,5 @@
 import React, { useState, useLayoutEffect, useEffect } from 'react'
+import { useLocation } from 'react-router-dom'
 import { 
   randomOnGrid, 
   applyWallHole, 
@@ -10,17 +11,19 @@ import {
   sameSpaceCheck
 } from './helpers'
 
-const gridSize = 60
+export const gridSize = 60
 document.documentElement.style.setProperty('--height', gridSize/2+'px')
 
 export const PositionContext = React.createContext({})
 export const PositionContextProvider = ({ children }) => {
+  const location = useLocation()
   const [reset, setReset] = useState(true)
   const [settings, setSettings] = useState({
     hasItem: true,
     hasHazard: true,
-    hasSpark: false,
+    hasSpark: true,
   })
+  const [gameReady, setGameReady] = useState(false)
   const [win, setWin] = useState(false)
   const [lose, setLose] = useState(false)
     const [wall, setWall] = useState({
@@ -72,13 +75,7 @@ export const PositionContextProvider = ({ children }) => {
     ratio: {},
     emoji: '🧟‍♀️',
   })
-  const [heroSpark, setHeroSpark] = useState({
-    position: {},
-    ratio: {},
-    emoji: '⚡️',
-    status: 'dormant',
-  })
-  const [oppositeSpark, setOppositeSpark] = useState({
+  const [spark, setSpark] = useState({
     position: {},
     ratio: {},
     emoji: '⚡️',
@@ -100,21 +97,21 @@ export const PositionContextProvider = ({ children }) => {
   const generateSpace = (heroSide, wall) => {
     if (heroSide) {
       return wall.horizontal ? {
-        x: randomOnGrid(gridSize, gridWidthCount),
-        y: randomOnGrid(gridSize, wall.position.y / gridSize)
+        x: randomOnGrid(gridWidthCount),
+        y: randomOnGrid(wall.position.y / gridSize)
       } : {
-        x: randomOnGrid(gridSize, wall.position.x / gridSize),
-        y: randomOnGrid(gridSize, gridHeightCount)
+        x: randomOnGrid(wall.position.x / gridSize),
+        y: randomOnGrid(gridHeightCount)
       }
     } else {
-      const x = randomOnGrid(gridSize, gridWidthCount, (wall.position.x / gridSize))
-      const y = randomOnGrid(gridSize, gridHeightCount, (wall.position.y / gridSize))
+      const x = randomOnGrid(gridWidthCount, (wall.position.x / gridSize))
+      const y = randomOnGrid(gridHeightCount, (wall.position.y / gridSize))
       return wall.horizontal ? {
-        x: randomOnGrid(gridSize, gridWidthCount),
+        x: randomOnGrid(gridWidthCount),
         y: y === wall.position.y ? y + gridSize : y
       } : {
         x: x === wall.position.x ? x + gridSize : x,
-        y: randomOnGrid(gridSize, gridHeightCount)
+        y: randomOnGrid(gridHeightCount)
       }
     }
   }
@@ -145,8 +142,8 @@ export const PositionContextProvider = ({ children }) => {
 
   // game board setup
   useLayoutEffect(() => {
-    if (reset) {
-      const wall = applyWall(bounds, gridSize, gridWidthCount, gridHeightCount)
+    if (reset && location.pathname.includes('board')) {
+      const wall = applyWall(bounds, gridSize)
       setWall(wall)
       const wallHole = applyWallHole(wall, gridSize, gridWidthCount, gridHeightCount, bounds)
       setWallHole(wallHole)
@@ -173,76 +170,76 @@ export const PositionContextProvider = ({ children }) => {
       }
 
       if (settings.hasSpark) {
-        const appliedHeroSpark = applyItem(true, wall, [hero, heroItem, oppositeGoal, ...wallHoleSurrounds])
-        setHeroSpark({...heroSpark, ...appliedHeroSpark})
-        const appliedOppositeSpark = applyItem(false, wall, [hero, heroItem, oppositeGoal, ...wallHoleSurrounds])
-        setOppositeSpark({...oppositeSpark, ...appliedOppositeSpark})
+        const appliedSpark = applyItem(true, wall, [hero, heroItem, oppositeGoal, ...wallHoleSurrounds])
+        setSpark({...spark, ...appliedSpark})
       }
 
       setReset(false)
       setWin(false)
       setLose(false)
+      setGameReady(true)
     }
-  },[reset])
+  },[reset, location.pathname])
 
   // update bounds and item positions on resize
   useEffect(() => {
-    const resize = () => {
-      const minDim = gridSize * 7
-      const testWidth = Math.floor(window.innerWidth / gridSize) * gridSize
-      const width = testWidth < minDim ? minDim : testWidth
-      const testHeight = (Math.floor(window.innerHeight / gridSize) * gridSize) - gridSize
-      const height = testHeight < minDim ? minDim : testHeight
-      const bounds = { width, height }
-      setBounds(bounds)
-      const wallX = findRatioLocation(width, wall.ratio, gridSize)
-      const wallY = findRatioLocation(height,wall.ratio, gridSize)
-      const keepWallFromEdge = (horizontal, space) => {
-        const direction = horizontal ? 'height' : 'width'
-        if (space === bounds[direction] || space === bounds[direction] - gridSize || space === bounds[direction] - gridSize * 2) {
-          return bounds[direction] - gridSize * 3
-        } else if (space === 0 || space === gridSize) {
-          return gridSize * 2
-        } else {
-          return space
+    if (gameReady) {
+      const resize = () => {
+        const minDim = gridSize * 7
+        const testWidth = Math.floor(window.innerWidth / gridSize) * gridSize
+        const width = testWidth < minDim ? minDim : testWidth
+        const testHeight = (Math.floor(window.innerHeight / gridSize) * gridSize) - gridSize
+        const height = testHeight < minDim ? minDim : testHeight
+        const bounds = { width, height }
+        setBounds(bounds)
+        const wallX = findRatioLocation(width, wall.ratio)
+        const wallY = findRatioLocation(height,wall.ratio)
+        const keepWallFromEdge = (horizontal, space) => {
+          const direction = horizontal ? 'height' : 'width'
+          if (space === bounds[direction] || space === bounds[direction] - gridSize || space === bounds[direction] - gridSize * 2) {
+            return bounds[direction] - gridSize * 3
+          } else if (space === 0 || space === gridSize) {
+            return gridSize * 2
+          } else {
+            return space
+          }
+        }
+        setWall(prevWall => ({
+          ...prevWall,
+          position: {
+            x: !prevWall.horizontal ? keepWallFromEdge(false, wallX)  : prevWall.position.x,
+            y: prevWall.horizontal ? keepWallFromEdge(true, wallY) : prevWall.position.y,
+          },
+          dimensions: createWallDimensions(prevWall.horizontal, bounds, gridSize)
+        }))
+        setWallHole(prevHole => ({
+          ...prevHole,
+          position: {
+            x: wall.horizontal ? findRatioLocation(width, prevHole.ratio) : keepWallFromEdge(false, wallX),
+            y: !wall.horizontal ? findRatioLocation(height, prevHole.ratio) : keepWallFromEdge(true, wallY),
+          }
+        }))
+        setHero(prev => setLocationOnRatio(prev, width, height, wall, true))
+        setHeroGoal(prev => setLocationOnRatio(prev, width, height, wall, false))
+        if (settings.hasItem) {
+          setHeroItem(prev => setLocationOnRatio(prev, width, height, wall, true))
+          setOppositeItem(prev => setLocationOnRatio(prev, width, height, wall, false))
+        }
+        setOpposite(prev => setLocationOnRatio(prev, width, height, wall, false))
+        setOppositeGoal(prev => setLocationOnRatio(prev, width, height, wall, true))
+        if (settings.hasHazard) {
+          setHeroHazard(prev => setLocationOnRatio(prev, width, height, wall, true))
+          setOppositeHazard(prev => setLocationOnRatio(prev, width, height, wall, false))
+        }
+        if (settings.hasSpark) {
+          setSpark(prev => setLocationOnRatio(prev, width, height, wall, true))
         }
       }
-      setWall(prevWall => ({
-        ...prevWall,
-        position: {
-          x: !prevWall.horizontal ? keepWallFromEdge(false, wallX)  : prevWall.position.x,
-          y: prevWall.horizontal ? keepWallFromEdge(true, wallY) : prevWall.position.y,
-        },
-        dimensions: createWallDimensions(prevWall.horizontal, bounds, gridSize)
-      }))
-      setWallHole(prevHole => ({
-        ...prevHole,
-        position: {
-          x: wall.horizontal ? findRatioLocation(width, prevHole.ratio, gridSize) : keepWallFromEdge(false, wallX),
-          y: !wall.horizontal ? findRatioLocation(height, prevHole.ratio, gridSize) : keepWallFromEdge(true, wallY),
-        }
-      }))
-      setHero(prev => setLocationOnRatio(prev, width, height, gridSize, wall, true))
-      setHeroGoal(prev => setLocationOnRatio(prev, width, height, gridSize, wall, false))
-      if (settings.hasItem) {
-        setHeroItem(prev => setLocationOnRatio(prev, width, height, gridSize, wall, true))
-        setOppositeItem(prev => setLocationOnRatio(prev, width, height, gridSize, wall, false))
-      }
-      setOpposite(prev => setLocationOnRatio(prev, width, height, gridSize, wall, false))
-      setOppositeGoal(prev => setLocationOnRatio(prev, width, height, gridSize, wall, true))
-      if (settings.hasHazard) {
-        setHeroHazard(prev => setLocationOnRatio(prev, width, height, gridSize, wall, true))
-        setOppositeHazard(prev => setLocationOnRatio(prev, width, height, gridSize, wall, false))
-      }
-      if (settings.hasSpark) {
-        setHeroSpark(prev => setLocationOnRatio(prev, width, height, gridSize, wall, true))
-        setOppositeSpark(prev => setLocationOnRatio(prev, width, height, gridSize, wall, true))
-      }
+  
+      window.addEventListener('resize', resize)
+      return () => window.removeEventListener('resize', resize)
     }
-
-    window.addEventListener('resize', resize)
-    return () => window.removeEventListener('resize', resize)
-  }, [wall.position])
+  }, [wall.position, gameReady])
 
   // Get clipping coords
   useEffect(() => {
@@ -426,43 +423,6 @@ export const PositionContextProvider = ({ children }) => {
     if (sameSpaceCheck(hero, heroItem)) setHero(prev => ({...prev, hasItem: true}))
     if (sameSpaceCheck(opposite, oppositeItem)) setOpposite(prev => ({...prev, hasItem: true}))
   },[hero.position, opposite.position])
-
-  // Spark actions: dormant for 5sec, then inactive for 3sec, then active for 1sec ? timing can be adjusted
-  // once dormant, sparks move position
-  useEffect(() => {
-    if (settings.hasSpark) {
-      setInterval(() => {
-        setHeroSpark(prev => ({
-          ...prev,
-          status: 'dormant',
-        }))
-        setOppositeSpark(prev => ({
-          ...prev,
-          status: 'dormant',
-        }))
-        setTimeout(() => {
-          setHeroSpark(prev => ({
-            ...prev,
-            status: 'inactive',
-          }))
-          setOppositeSpark(prev => ({
-            ...prev,
-            status: 'inactive',
-          }))
-          setTimeout(() => {
-            setHeroSpark(prev => ({
-              ...prev,
-              status: 'active',
-            }))
-            setOppositeSpark(prev => ({
-              ...prev,
-              status: 'active',
-            }))
-          },1000)
-        },3000)
-      },5000)
-    }
-  },[settings.hasSpark])
   
   // handle win and lose conditions
   useEffect(() => {
@@ -495,10 +455,10 @@ export const PositionContextProvider = ({ children }) => {
     if (settings.hasHazard && (sameSpaceCheck(hero, heroHazard) || sameSpaceCheck(hero, oppositeHazard) || sameSpaceCheck(opposite, heroHazard) || sameSpaceCheck(opposite, oppositeHazard))) {
       handleLose()
     }
-    if (settings.hasSpark && (heroSpark.active && (sameSpaceCheck(hero, heroSpark) || sameSpaceCheck(opposite, heroSpark)) || oppositeSpark.active && (sameSpaceCheck(hero, oppositeSpark) || sameSpaceCheck(opposite, oppositeSpark)))) {
+    if (settings.hasSpark && spark.status === 'active' && (sameSpaceCheck(hero, spark) || sameSpaceCheck(opposite, spark))) {
       handleLose()
     }
-  },[hero.position, opposite.position, heroSpark.active])
+  },[hero.position, opposite.position, spark])
 
   return (
     <PositionContext.Provider
@@ -519,8 +479,8 @@ export const PositionContextProvider = ({ children }) => {
         heroGoal,
         heroHazard,
         setHeroHazard,
-        heroSpark,
-        setHeroSpark,
+        spark,
+        setSpark,
 
         opposite,
         setOpposite,
@@ -528,11 +488,11 @@ export const PositionContextProvider = ({ children }) => {
         oppositeGoal,
         oppositeHazard,
         setOppositeHazard,
-        oppositeSpark,
-        setOppositeSpark,
 
+        applyItem,
         canMove,
-        bounds
+        bounds,
+        gameReady,
       }}
     >
       {children}

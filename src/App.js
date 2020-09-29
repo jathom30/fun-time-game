@@ -7,8 +7,8 @@ import { BoardRoute, HowTo, Home, Settings } from './routes'
 const App = () => {
   return (
     <div className="App">
-      <PositionContextProvider>
-        <Router>
+      <Router>
+        <PositionContextProvider>
           <Route exact path="/">
             <Home />
           </Route> 
@@ -21,8 +21,8 @@ const App = () => {
           <Route path="/settings">
             <Settings />
           </Route>
-        </Router>
-      </PositionContextProvider>
+        </PositionContextProvider>
+      </Router>
     </div>
   );
 }

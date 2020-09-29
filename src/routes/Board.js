@@ -1,6 +1,6 @@
 import React, { useContext } from 'react'
 import './board.scss'
-import { Wall, WallHole, Piece, WinLose } from '../_components'
+import { Wall, WallHole, Piece, WinLose, Spark } from '../_components'
 import { PositionContext } from '../PositionContext';
 import { Link } from 'react-router-dom'
 
@@ -43,8 +43,7 @@ export const Board = () => {
       )}
       {settings.hasSpark && (
         <>
-          <Piece position={heroSpark.position} className={`HeroSpark is-${heroSpark.status}`} emoji={heroSpark.emoji} />
-          <Piece position={oppositeSpark.position} className={`HeroSpark is-${oppositeSpark.status}`} emoji={oppositeSpark.emoji} />
+          <Spark />
         </>
       )}
 

@@ -1,5 +1,5 @@
 import React from 'react'
-const gridSize = 60
+import { gridSize } from '../PositionContext'
 
 const standardStyles = {
   height: gridSize, width: gridSize, fontSize: gridSize, lineHeight: gridSize,

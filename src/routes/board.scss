@@ -85,6 +85,9 @@
     &.is-active {
       opacity: 1;
     }
+    &.is-dormant {
+      opacity: 0;
+    }
   }
   
 }
