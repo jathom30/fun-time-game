@@ -11,7 +11,7 @@ import {
   sameSpaceCheck
 } from './helpers'
 
-export const gridSize = 60
+export const gridSize = 40
 document.documentElement.style.setProperty('--height', gridSize/2+'px')
 
 export const PositionContext = React.createContext({})
@@ -82,9 +82,7 @@ export const PositionContextProvider = ({ children }) => {
     status: 'dormant',
   })
 
-  // movement related state
   const [canMove, setCanMove] = useState(true)
-
   const [bounds, setBounds] = useState({
     width: Math.floor(document.documentElement.clientWidth / gridSize) * gridSize,
     height: Math.floor((document.documentElement.clientHeight - gridSize) / gridSize) * gridSize,
@@ -143,8 +141,8 @@ export const PositionContextProvider = ({ children }) => {
   // game board setup
   useLayoutEffect(() => {
     if (reset && location.pathname.includes('board')) {
-      const appliedWall = applyWall(bounds, gridSize)
-      const appliedWallHole = applyWallHole(appliedWall, gridSize, gridWidthCount, gridHeightCount, bounds)
+      const appliedWall = applyWall(bounds)
+      const appliedWallHole = applyWallHole(appliedWall, gridWidthCount, gridHeightCount, bounds)
       const appliedHero = applyCharacter(true, appliedWall)
       const appliedOpposite = applyCharacter(false, appliedWall)
       const appliedHeroItem = applyItem(true, appliedWall, [appliedHero])
@@ -213,7 +211,7 @@ export const PositionContextProvider = ({ children }) => {
             x: !prevWall.horizontal ? keepWallFromEdge(false, wallX)  : prevWall.position.x,
             y: prevWall.horizontal ? keepWallFromEdge(true, wallY) : prevWall.position.y,
           },
-          dimensions: createWallDimensions(prevWall.horizontal, bounds, gridSize)
+          dimensions: createWallDimensions(prevWall.horizontal, bounds)
         }))
         setWallHole(prevHole => ({
           ...prevHole,
@@ -412,14 +410,14 @@ export const PositionContextProvider = ({ children }) => {
     }
     
     const handleMove = e => {
-      canMove && move(e)
+      canMove && !(win || lose) && move(e)
       setCanMove(false)
-      setTimeout(() => setCanMove(true), 200)
+      !(win || lose) && setTimeout(() => setCanMove(true), 200)
     }
 
     document.addEventListener('keypress', handleMove)
     return () => document.removeEventListener('keypress', handleMove)
-  },[canMove])
+  },[canMove, win, lose])
 
   // hero and opposite get their items
   useEffect(() => {

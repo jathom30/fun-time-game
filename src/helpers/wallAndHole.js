@@ -1,7 +1,7 @@
 import {randomOnGrid} from './general'
 import { gridSize } from '../PositionContext'
 
-const wallCheck = (position, upperBound, gridSize) => {
+const wallCheck = (position, upperBound) => {
   switch (position) {
     case 0:
       return gridSize * 2
@@ -18,7 +18,7 @@ const wallCheck = (position, upperBound, gridSize) => {
   }
 }
 
-export const createWallDimensions = (horizontal, bounds, gridSize) => {
+export const createWallDimensions = (horizontal, bounds) => {
   return horizontal ? {
     width: bounds.width, height: gridSize,
   } : {
@@ -26,14 +26,14 @@ export const createWallDimensions = (horizontal, bounds, gridSize) => {
   }
 }
 
-export const applyWall = (bounds, gridSize) => {
+export const applyWall = (bounds) => {
   const horizontal = Math.floor(Math.random() * 2)
-  const dimensions = createWallDimensions(horizontal, bounds, gridSize)
+  const dimensions = createWallDimensions(horizontal, bounds)
   const getMinMax = (limit) =>  (bounds[horizontal ? 'height' : 'width'] * limit) / gridSize
   const min = Math.ceil(getMinMax(.25))
   const max = Math.ceil(getMinMax(.75))
-  const x = horizontal ? 0 : wallCheck(randomOnGrid(max, min), bounds.width, gridSize)
-  const y = !horizontal ? 0 : wallCheck(randomOnGrid(max, min), bounds.height, gridSize)
+  const x = horizontal ? 0 : wallCheck(randomOnGrid(max, min), bounds.width)
+  const y = !horizontal ? 0 : wallCheck(randomOnGrid(max, min), bounds.height)
   const ratio = horizontal ? (y / bounds.height) : (x / bounds.width)
   return {
     position: { x, y },
@@ -43,7 +43,7 @@ export const applyWall = (bounds, gridSize) => {
   }
 }
 
-export const applyWallHole = (wall, gridSize, gridWidthCount, gridHeightCount, bounds) => {
+export const applyWallHole = (wall, gridWidthCount, gridHeightCount, bounds) => {
   const coord = randomOnGrid(wall.horizontal ? gridWidthCount : gridHeightCount)
   const position = wall.horizontal ? {
     x: coord, y: wall.position.y,
