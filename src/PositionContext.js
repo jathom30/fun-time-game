@@ -143,34 +143,37 @@ export const PositionContextProvider = ({ children }) => {
   // game board setup
   useLayoutEffect(() => {
     if (reset && location.pathname.includes('board')) {
-      const wall = applyWall(bounds, gridSize)
-      setWall(wall)
-      const wallHole = applyWallHole(wall, gridSize, gridWidthCount, gridHeightCount, bounds)
-      setWallHole(wallHole)
-      const appliedHero = applyCharacter(true, wall)
+      const appliedWall = applyWall(bounds, gridSize)
+      const appliedWallHole = applyWallHole(appliedWall, gridSize, gridWidthCount, gridHeightCount, bounds)
+      const appliedHero = applyCharacter(true, appliedWall)
+      const appliedOpposite = applyCharacter(false, appliedWall)
+      const appliedHeroItem = applyItem(true, appliedWall, [appliedHero])
+      const appliedOppositeItem = applyItem(false, appliedWall, [appliedOpposite])
+      const appliedHeroGoal = applyItem(false, appliedWall, [appliedOpposite, appliedOppositeItem])
+      const appliedOppositeGoal = applyItem(true, appliedWall, [appliedHero, appliedHeroItem])
+      const wallHoleSurrounds = appliedWall.horizontal ? [{position: {x: appliedWallHole.position.x, y: appliedWallHole.position.y - gridSize}}, {position: {x: appliedWallHole.position.x, y: appliedWallHole.position.y + gridSize}}] : [{position: {x: appliedWallHole.position.x - gridSize, y: appliedWallHole.position.y}},{position: {x: appliedWallHole.position.x + gridSize, y: appliedWallHole.position.y}}]
+      const appliedHeroHazard = applyItem(true, appliedWall, [appliedHero, (settings.hasItem && appliedHeroItem), appliedOppositeGoal, ...wallHoleSurrounds])
+      const appliedOppositeHazard = applyItem(false, appliedWall, [appliedOpposite, (settings.hasItem && appliedOppositeItem), heroGoal, ...wallHoleSurrounds])
+      const randomSide = (Math.floor(Math.random() * 2) + 1) % 2 === 0
+      const appliedSpark = applyItem(randomSide, appliedWall, 
+        [hero, appliedHeroItem, ...(settings.hasItem && [appliedHeroItem, appliedOppositeItem]), appliedOppositeGoal, appliedHeroGoal, ...(settings.hasHazard && [appliedHeroHazard, appliedOppositeHazard]), ...wallHoleSurrounds])
+
+      setWall(appliedWall)
+      setWallHole(appliedWallHole)
       setHero({...hero, ...appliedHero})
-      const appliedOpposite = applyCharacter(false, wall)
       setOpposite({...opposite, ...appliedOpposite})
-      const heroItem = applyItem(true, wall, [hero])
-      const oppositeItem = applyItem(false, wall, [opposite])
       if (settings.hasItem) {
-        setHeroItem(heroItem)
-        setOppositeItem(oppositeItem)
+        setHeroItem(appliedHeroItem)
+        setOppositeItem(appliedOppositeItem)
       }
-      const heroGoal = applyItem(false, wall, [opposite, oppositeItem])
-      setHeroGoal(heroGoal)
-      const oppositeGoal = applyItem(true, wall, [hero, heroItem])
-      setOppositeGoal(oppositeGoal)
-      const wallHoleSurrounds = wall.horizontal ? [{position: {x: wallHole.position.x, y: wallHole.position.y - gridSize}}, {position: {x: wallHole.position.x, y: wallHole.position.y + gridSize}}] : [{position: {x: wallHole.position.x - gridSize, y: wallHole.position.y}},{position: {x: wallHole.position.x + gridSize, y: wallHole.position.y}}]
+      setHeroGoal(appliedHeroGoal)
+      setOppositeGoal(appliedOppositeGoal)
       if (settings.hasHazard) {
-        const appliedHeroHazard = applyItem(true, wall, [hero, heroItem, oppositeGoal, ...wallHoleSurrounds])
         setHeroHazard({...heroHazard, ...appliedHeroHazard})
-        const appliedOppositeHazard = applyItem(false, wall, [opposite, oppositeItem, heroGoal, ...wallHoleSurrounds])
         setOppositeHazard({...oppositeHazard, ...appliedOppositeHazard})
       }
 
       if (settings.hasSpark) {
-        const appliedSpark = applyItem(true, wall, [hero, heroItem, oppositeGoal, ...wallHoleSurrounds])
         setSpark({...spark, ...appliedSpark})
       }
 
