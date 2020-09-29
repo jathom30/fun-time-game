@@ -38,14 +38,22 @@
           display: grid;
           grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
           gap: 1rem;
-          label {
+          .wrapper-rules {
             font-size: 1.5rem;
-            display: flex;
-            align-items: center;
-            word-wrap: none;
-            input {
-              margin-right: 1rem;
+            padding: .5rem;
+            border-radius: .25rem;
+            &:hover {
+              background: rgba(black,.1);
+            }
+            label {
               cursor: pointer;
+              display: flex;
+              align-items: center;
+              word-wrap: none;
+              input {
+                cursor: pointer;
+                margin-right: 1rem;
+              }
             }
           }
         }
@@ -66,10 +74,10 @@
               margin: 0;
             }
             &.is-selected {
-              background: rgba(black,.2);
+              box-shadow: 0 0 0 2px var(--color);
             }
             &:hover {
-              box-shadow: 0 0 0 2px var(--color);
+              background: rgba(black,.1);
             }
           }
         }

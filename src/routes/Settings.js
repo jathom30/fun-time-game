@@ -70,7 +70,7 @@ export const Settings = () => {
             </form>
           </div>
           <div className="rule-wrapper">
-            <p>Bad Guy Icons</p>
+            <p>Hazard Icons</p>
             <form className="emojiForm-rule">
               {emojiChoices.map(choice => (
                 <label className={`${heroHazard.emoji === choice ? 'is-selected' : ''}`} key={choice} htmlFor={choice} onClick={e => {setHeroHazard({...heroHazard, emoji: e.target.htmlFor}); setOppositeHazard({...oppositeHazard, emoji: e.target.htmlFor})}}>
