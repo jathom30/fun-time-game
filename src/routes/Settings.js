@@ -19,7 +19,6 @@ export const Settings = () => {
   }
 
   const updateSettings = (setting) => {
-    console.log(settings[setting])
     setSettings({
       ...settings,
       [setting]: !settings[setting],
@@ -38,7 +37,7 @@ export const Settings = () => {
             <p>Items on board</p>
             <div className="rules-rule">
               {Object.keys(settings).map(setting => (
-                <div className="wrapper-rules" onClick={() => updateSettings(setting)}>
+                <div key={setting} className="wrapper-rules" onClick={() => updateSettings(setting)}>
                   <label htmlFor="hazards">
                     <input checked={settings[setting]} onChange={e => handleSettings(e,setting)} type="checkbox" />
                     {setting.slice(3)}
