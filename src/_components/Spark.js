@@ -22,6 +22,6 @@ export const Spark = () => {
   },[gameReady])
 
   return (
-    <Piece className={`HeroSpark is-${spark.status}`} position={spark.position} emoji={spark.emoji} />
+    <Piece className={`Spark is-${spark.status}`} position={spark.position} emoji={spark.emoji} />
   )
 }
