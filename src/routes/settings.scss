@@ -36,8 +36,18 @@
         }
         .rules-rule {
           display: grid;
-          grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
-          gap: .5rem;
+          grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+          gap: 1rem;
+          label {
+            font-size: 1.5rem;
+            display: flex;
+            align-items: center;
+            word-wrap: none;
+            input {
+              margin-right: 1rem;
+              cursor: pointer;
+            }
+          }
         }
         .emojiForm-rule {
           font-size: 3rem;

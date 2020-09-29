@@ -18,6 +18,14 @@ export const Settings = () => {
     setReset(true)
   }
 
+  const updateSettings = (setting) => {
+    console.log(settings[setting])
+    setSettings({
+      ...settings,
+      [setting]: !settings[setting],
+    })
+  }
+
   return (
     <div className="Settings">
       <div className="topBar-Settings">
@@ -29,18 +37,14 @@ export const Settings = () => {
           <div className="rule-wrapper">
             <p>Items on board</p>
             <div className="rules-rule">
-              <label htmlFor="hazards">
-                Bad guys?
-                <input checked={settings.hasHazard} onChange={e => handleSettings(e,'hasHazard')} type="checkbox" />
-              </label>
-              <label htmlFor="items">
-                Keys?
-                <input checked={settings.hasItem} onChange={e => handleSettings(e,'hasItem')} type="checkbox" />
-              </label>
-              <label htmlFor="items">
-                Sparks?
-                <input checked={settings.hasSpark} onChange={e => handleSettings(e,'hasSpark')} type="checkbox" />
-              </label>
+              {Object.keys(settings).map(setting => (
+                <div className="wrapper-rules" onClick={() => updateSettings(setting)}>
+                  <label htmlFor="hazards">
+                    <input checked={settings[setting]} onChange={e => handleSettings(e,setting)} type="checkbox" />
+                    {setting.slice(3)}
+                  </label>
+                </div>
+              ))}
             </div>
           </div>
           <div className="rule-wrapper">

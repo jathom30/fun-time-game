@@ -19,7 +19,7 @@ export const PositionContextProvider = ({ children }) => {
   const location = useLocation()
   const [reset, setReset] = useState(true)
   const [settings, setSettings] = useState({
-    hasItem: false,
+    hasItem: true,
     hasHazard: true,
     hasSpark: true,
   })
