@@ -421,15 +421,16 @@ export const PositionContextProvider = ({ children }) => {
     return () => document.removeEventListener('keypress', handleMove)
   },[canMove, win, lose])
 
-  // hero and opposite get their items
+  // hero and opposite get their items, check if on their goals
   useEffect(() => {
     if (sameSpaceCheck(hero, heroItem)) setHero(prev => ({...prev, hasItem: true}))
     if (sameSpaceCheck(opposite, oppositeItem)) setOpposite(prev => ({...prev, hasItem: true}))
+    hero.hasItem && setHero(prev => ({...prev, home: sameSpaceCheck(prev,heroGoal)}))
+    opposite.hasItem && setOpposite(prev => ({...prev, home: sameSpaceCheck(prev, oppositeGoal)}))
   },[hero.position, opposite.position])
   
-  // handle win and lose conditions
+  // handle lose conditions
   useEffect(() => {
-
     const handleLose = () => {
       setCanMove(false)
       setTimeout(() => {
@@ -437,11 +438,6 @@ export const PositionContextProvider = ({ children }) => {
       }, 200);
     }
 
-    // if (sameSpaceCheck(hero,heroGoal) && sameSpaceCheck(opposite, oppositeGoal)) {
-    //   handleWin()
-    // }
-    hero.hasItem && setHero(prev => ({...prev, home: sameSpaceCheck(prev,heroGoal)}))
-    opposite.hasItem && setOpposite(prev => ({...prev, home: sameSpaceCheck(prev, oppositeGoal)}))
     if (settings.hasHazard && (sameSpaceCheck(hero, heroHazard) || sameSpaceCheck(hero, oppositeHazard) || sameSpaceCheck(opposite, heroHazard) || sameSpaceCheck(opposite, oppositeHazard))) {
       handleLose()
     }
@@ -450,15 +446,14 @@ export const PositionContextProvider = ({ children }) => {
     }
   },[hero.position, opposite.position, spark])
 
+  // handle win condition
   useEffect(() => {
     const handleWin = () => {
-      if (settings.hasItem) {
-        if (hero.hasItem && opposite.hasItem) {
-          setCanMove(false)
-          setTimeout(() => {
-            setWin(true)
-          }, 200)
-        }
+      if (settings.hasItem && hero.hasItem && opposite.hasItem) {
+        setCanMove(false)
+        setTimeout(() => {
+          setWin(true)
+        }, 200)
       } else {
         setCanMove(false)
         setTimeout(() => {
@@ -468,7 +463,7 @@ export const PositionContextProvider = ({ children }) => {
     }
     hero.home && opposite.home && handleWin()
 
-  },[hero.home && opposite.home])
+  },[hero.home, opposite.home])
 
   return (
     <PositionContext.Provider
