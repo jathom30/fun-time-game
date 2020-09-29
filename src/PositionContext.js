@@ -41,6 +41,7 @@ export const PositionContextProvider = ({ children }) => {
     ratio: {},
     hasItem: false,
     emoji: '🕵️‍♂️',
+    home: false,
   })
   const [heroItem, setHeroItem] = useState({
     position: {x:1,y:1},
@@ -61,6 +62,7 @@ export const PositionContextProvider = ({ children }) => {
     ratio: {},
     hasItem: false,
     emoji: '🕵️‍♀️',
+    home: false
   })
   const [oppositeItem, setOppositeItem] = useState({
     position: {x:1,y:1},
@@ -427,9 +429,31 @@ export const PositionContextProvider = ({ children }) => {
   
   // handle win and lose conditions
   useEffect(() => {
+
+    const handleLose = () => {
+      setCanMove(false)
+      setTimeout(() => {
+        setLose(true)
+      }, 200);
+    }
+
+    // if (sameSpaceCheck(hero,heroGoal) && sameSpaceCheck(opposite, oppositeGoal)) {
+    //   handleWin()
+    // }
+    hero.hasItem && setHero(prev => ({...prev, home: sameSpaceCheck(prev,heroGoal)}))
+    opposite.hasItem && setOpposite(prev => ({...prev, home: sameSpaceCheck(prev, oppositeGoal)}))
+    if (settings.hasHazard && (sameSpaceCheck(hero, heroHazard) || sameSpaceCheck(hero, oppositeHazard) || sameSpaceCheck(opposite, heroHazard) || sameSpaceCheck(opposite, oppositeHazard))) {
+      handleLose()
+    }
+    if (settings.hasSpark && spark.status === 'active' && (sameSpaceCheck(hero, spark) || sameSpaceCheck(opposite, spark))) {
+      handleLose()
+    }
+  },[hero.position, opposite.position, spark])
+
+  useEffect(() => {
     const handleWin = () => {
       if (settings.hasItem) {
-        if (hero.hasItem) {
+        if (hero.hasItem && opposite.hasItem) {
           setCanMove(false)
           setTimeout(() => {
             setWin(true)
@@ -442,24 +466,9 @@ export const PositionContextProvider = ({ children }) => {
         }, 200)
       }
     }
+    hero.home && opposite.home && handleWin()
 
-    const handleLose = () => {
-      setCanMove(false)
-      setTimeout(() => {
-        setLose(true)
-      }, 200);
-    }
-
-    if (sameSpaceCheck(hero,heroGoal) && sameSpaceCheck(opposite, oppositeGoal)) {
-      handleWin()
-    }
-    if (settings.hasHazard && (sameSpaceCheck(hero, heroHazard) || sameSpaceCheck(hero, oppositeHazard) || sameSpaceCheck(opposite, heroHazard) || sameSpaceCheck(opposite, oppositeHazard))) {
-      handleLose()
-    }
-    if (settings.hasSpark && spark.status === 'active' && (sameSpaceCheck(hero, spark) || sameSpaceCheck(opposite, spark))) {
-      handleLose()
-    }
-  },[hero.position, opposite.position, spark])
+  },[hero.home && opposite.home])
 
   return (
     <PositionContext.Provider
