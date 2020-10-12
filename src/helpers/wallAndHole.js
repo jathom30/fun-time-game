@@ -44,7 +44,6 @@ export const applyWall = (bounds) => {
 }
 
 export const applyWallHole = (wall, bounds, hero, opposite) => {
-  console.log(hero, opposite)
   // if horizontal: min: hero or opposite x min, max: hero or opposite x max
   const min = (axis) => hero.position[axis] <= opposite.position[axis] ? hero.position[axis] : opposite.position[axis]
   const max = (axis) => hero.position[axis] >= opposite.position[axis] ? hero.position[axis] : opposite.position[axis]
