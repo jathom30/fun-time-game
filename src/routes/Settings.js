@@ -27,10 +27,10 @@ export const Settings = () => {
 
   return (
     <div className="Settings">
-      <div className="topBar-Settings">
-        <Link className="backBtn-topBar" to="/">Back to home</Link>
-      </div>
       <div className="container-Settings">
+        <div className="topBar-Settings">
+          <Link className="backBtn-topBar" to="/">Back to home</Link>
+        </div>
         <p className="label-container">Settings</p>
         <div className="wrapper-container">
           <div className="rule-wrapper">

@@ -4,19 +4,26 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
-    margin: 0 1rem;
+    margin-bottom: 1rem;
     .backBtn-topBar {
       color: white;
       text-decoration: none;
-      padding: 1rem;
+      padding: .5rem 1rem;
+      border: 1px solid white;
       font-weight: bold;
       cursor: pointer;
+      border-radius: .25rem;
+      &:hover {
+        background: white;
+        color: var(--color);
+      }
     }
   }
   .container-Settings {
     max-width: 75vw;
     min-width: 300px;
-    margin: 2rem auto;
+    margin: 0 auto;
+    padding: 2rem 0;
     .label-container {
       color: white;
       margin-bottom: 1rem;

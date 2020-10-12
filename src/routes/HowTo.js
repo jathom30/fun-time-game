@@ -5,10 +5,10 @@ import './how_to.scss'
 export const HowTo = () => {
   return (
     <div className="HowTo">
-      <div className="topBar-HowTo">
-        <Link className="backBtn-topBar" to="/">Back to home</Link>
-      </div>
       <div className="wrapper-HowTo">
+        <div className="topBar-HowTo">
+          <Link className="backBtn-topBar" to="/">Back to home</Link>
+        </div>
         <div className="tldr-wrapper">
           <h1>tl;dr</h1>
           <p>Pick up your keys and get in your home without running into any bad guys.</p>
