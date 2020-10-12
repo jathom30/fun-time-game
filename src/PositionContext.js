@@ -4,11 +4,13 @@ import {
   randomOnGrid, 
   applyWallHole, 
   applyWall, 
+  applySecondaryWall,
   createWallDimensions, 
   ratioXY, 
   findRatioLocation,
   setLocationOnRatio, 
-  sameSpaceCheck
+  sameSpaceCheck,
+  getClippingCoords
 } from './helpers'
 
 export const gridSize = 40
@@ -36,6 +38,7 @@ export const PositionContextProvider = ({ children }) => {
     position: {},
     ratio: 0,
   })
+  const [secondaryWall, setSecondaryWall] = useState({position: {}, dimensions: {}, ratio: {}, horizontal: false})
   const [hero, setHero] = useState({
     position: {x:0,y:0},
     ratio: {},
@@ -144,9 +147,10 @@ export const PositionContextProvider = ({ children }) => {
   useLayoutEffect(() => {
     if (reset && location.pathname.includes('board')) {
       const appliedWall = applyWall(bounds)
-      const appliedWallHole = applyWallHole(appliedWall, gridWidthCount, gridHeightCount, bounds)
       const appliedHero = applyCharacter(true, appliedWall)
       const appliedOpposite = applyCharacter(false, appliedWall)
+      const appliedWallHole = applyWallHole(appliedWall, bounds, appliedHero, appliedOpposite)
+      // const appliedSecondaryWall = applySecondaryWall(appliedWall, appliedWallHole, bounds)
       const appliedHeroItem = applyItem(true, appliedWall, [appliedHero])
       const appliedOppositeItem = applyItem(false, appliedWall, [appliedOpposite])
       const appliedHeroGoal = applyItem(false, appliedWall, [appliedOpposite, ...(settings.hasItem ? [appliedOppositeItem] : [])])
@@ -160,6 +164,7 @@ export const PositionContextProvider = ({ children }) => {
 
       setWall(appliedWall)
       setWallHole(appliedWallHole)
+      // setSecondaryWall(appliedSecondaryWall)
       setHero({...hero, ...appliedHero})
       setOpposite({...opposite, ...appliedOpposite})
       if (settings.hasItem) {
@@ -222,6 +227,7 @@ export const PositionContextProvider = ({ children }) => {
             y: !wall.horizontal ? findRatioLocation(height, prevHole.ratio) : keepWallFromEdge(true, wallY),
           }
         }))
+        setSecondaryWall(prev => setLocationOnRatio(prev, width, height, wall, false))
         setHero(prev => setLocationOnRatio(prev, width, height, wall, true))
         setHeroGoal(prev => setLocationOnRatio(prev, width, height, wall, false))
         if (settings.hasItem) {
@@ -246,19 +252,9 @@ export const PositionContextProvider = ({ children }) => {
 
   // Get clipping coords
   useEffect(() => {
-    const yUnits = wall.dimensions.height / gridSize
-    const xUnits = wall.dimensions.width / gridSize
-    const yVoids = Array.from({length: yUnits}, (v, i) => i).map(u => u * gridSize + wall.position.y)
-    const xVoids = Array.from({length: xUnits}, (v, i) => i).map(u => u * gridSize + wall.position.x)
-    const voidCoords = yVoids.map(y => {
-      return xVoids.map(x => {
-        return {
-          x, y
-        }
-      })
-    }).flat()
+    const coords = [...getClippingCoords(wall), ...getClippingCoords(secondaryWall)]
     .filter(coord => !(coord.x === wallHole.position.x && coord.y === wallHole.position.y))
-    setVoidPositions(voidCoords)
+    setVoidPositions(coords)
   }, [wall.position, wallHole.position])
 
   // move player
@@ -477,6 +473,7 @@ export const PositionContextProvider = ({ children }) => {
 
         wall,
         wallHole,
+        // secondaryWall,
 
         hero,
         setHero,

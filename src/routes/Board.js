@@ -10,18 +10,17 @@ export const Board = () => {
     lose,
     settings,
     wall, 
+    secondaryWall,
     bounds, 
     wallHole, 
     hero, 
     heroItem, 
-    heroSpark,
     opposite, 
     oppositeItem, 
     heroGoal, 
     oppositeGoal, 
     heroHazard, 
     oppositeHazard,
-    oppositeSpark,
   } = useContext(PositionContext)
   
 
@@ -29,6 +28,7 @@ export const Board = () => {
     <div className="Board" style={{height: bounds.height, width: bounds.width}}>
       <Wall position={wall.position} dimensions={wall.dimensions} />
       <WallHole position={wallHole.position} />
+      {/* <Wall position={secondaryWall.position} dimensions={secondaryWall.dimensions} /> */}
       <Piece position={hero.position} className={`Hero ${hero.hasItem ? 'has-item' : ''}`} emoji={hero.emoji} />
       {settings.hasItem && !hero.hasItem && <Piece position={heroItem.position} className="HeroItem" emoji="🔑" />}
       <Piece position={opposite.position} className={`Opposite ${opposite.hasItem ? 'has-item' : ''}`} emoji={opposite.emoji} />
