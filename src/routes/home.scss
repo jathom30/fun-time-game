@@ -34,7 +34,6 @@
     gap: 1rem;
     width: 100%;
     .btn-routes {
-      background: white;
       text-align: center;
       text-decoration: none;
       width: 100%;
@@ -42,8 +41,14 @@
       font-size: 1.25rem;
       border: none;
       border-radius: .25rem;
-      color: var(--color);
+      color: white;
+      font-weight: bold;
+      border: 1px solid white;
       cursor: pointer;
+      &:hover {
+        background: white;
+        color: var(--color);
+      }
     }
   }
 }
