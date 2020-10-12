@@ -44,7 +44,7 @@ export const applyWall = (bounds) => {
 }
 
 export const applyWallHole = (wall, bounds, hero, opposite) => {
-  // if horizontal: min: hero or opposite x min, max: hero or opposite x max
+  // if horizontal: min: hero or opposite x min, max: hero or opposite x max <= goals not players
   const min = (axis) => hero.position[axis] <= opposite.position[axis] ? hero.position[axis] : opposite.position[axis]
   const max = (axis) => hero.position[axis] >= opposite.position[axis] ? hero.position[axis] : opposite.position[axis]
   const coord = randomOnGrid(max(wall.horizontal ? 'x' : 'y') / gridSize, min(wall.horizontal ? 'x' : 'y') / gridSize)

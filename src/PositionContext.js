@@ -149,12 +149,12 @@ export const PositionContextProvider = ({ children }) => {
       const appliedWall = applyWall(bounds)
       const appliedHero = applyCharacter(true, appliedWall)
       const appliedOpposite = applyCharacter(false, appliedWall)
-      const appliedWallHole = applyWallHole(appliedWall, bounds, appliedHero, appliedOpposite)
       // const appliedSecondaryWall = applySecondaryWall(appliedWall, appliedWallHole, bounds)
       const appliedHeroItem = applyItem(true, appliedWall, [appliedHero])
       const appliedOppositeItem = applyItem(false, appliedWall, [appliedOpposite])
       const appliedHeroGoal = applyItem(false, appliedWall, [appliedOpposite, ...(settings.hasItem ? [appliedOppositeItem] : [])])
       const appliedOppositeGoal = applyItem(true, appliedWall, [appliedHero, ...(settings.hasItem ? [appliedHeroItem] : [])])
+      const appliedWallHole = applyWallHole(appliedWall, bounds, appliedHeroGoal, appliedOppositeGoal)
       const wallHoleSurrounds = appliedWall.horizontal ? [{position: {x: appliedWallHole.position.x, y: appliedWallHole.position.y - gridSize}}, {position: {x: appliedWallHole.position.x, y: appliedWallHole.position.y + gridSize}}] : [{position: {x: appliedWallHole.position.x - gridSize, y: appliedWallHole.position.y}},{position: {x: appliedWallHole.position.x + gridSize, y: appliedWallHole.position.y}}]
       const appliedHeroHazard = applyItem(true, appliedWall, [appliedHero, ...(settings.hasItem ? [appliedHeroItem] : []), appliedOppositeGoal, ...wallHoleSurrounds])
       const appliedOppositeHazard = applyItem(false, appliedWall, [appliedOpposite, ...(settings.hasItem ? [appliedOppositeItem] : []), heroGoal, ...wallHoleSurrounds])
